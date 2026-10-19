@@ -218,7 +218,7 @@ $("switchAuth").addEventListener("click",()=>{
 });
 async function ensureProfile(user){
  // Profiles are created by the database signup trigger. Read the signed-in user's profile.
- const {data,error}=await db.from("profiles").select("*").eq("id",user.id).maybeSingle()
+ const {data,error}=await db.from("profiles").select("*").eq("id",user.id).maybeSingle();
  if(error) throw error;
  currentProfile=data;
  if(!data) throw new Error("Your profile was not created by the database trigger. Check the Supabase signup trigger and profile schema.");

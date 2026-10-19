@@ -1,1 +1,426 @@
 
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#faf4ef">
+<title>Unheard Soul — Find your people</title>
+<meta name="description" content="Discover people and build genuine, private connections.">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<style>
+:root{--bg:#faf4ef;--paper:#fffdfa;--plum:#713f5a;--rose:#ead9df;--sage:#e4eadd;--ink:#342632;--muted:#786b75;--line:#eadde0;--red:#a43d4a}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:system-ui,-apple-system,"Segoe UI",sans-serif}
+button,input,textarea{font:inherit}
+button{border:0;border-radius:12px;padding:11px 15px;cursor:pointer;font-weight:650}
+button:disabled{opacity:.5;cursor:not-allowed}
+.primary{background:var(--plum);color:white}
+.soft{background:var(--rose);color:var(--plum)}
+.danger{background:#f7e3e4;color:var(--red)}
+input,textarea{width:100%;padding:12px;border:1px solid var(--line);border-radius:11px;background:white;color:var(--ink)}
+textarea{min-height:85px;resize:vertical}
+label{display:block;font-size:13px;font-weight:700;margin:13px 0 6px}
+a{color:var(--plum)}
+.muted{color:var(--muted)}
+.small{font-size:13px}
+header{position:sticky;top:0;z-index:5;background:#faf4efeF;backdrop-filter:blur(12px);border-bottom:1px solid var(--line)}
+.bar{max-width:1100px;margin:auto;padding:14px 20px;display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.logo{font-size:22px;font-weight:850;letter-spacing:-.7px;color:var(--plum)}
+nav{display:flex;gap:5px;flex-wrap:wrap}
+nav button{background:transparent;color:var(--muted);padding:9px 11px}
+nav button.active,nav button:hover{background:var(--rose);color:var(--plum)}
+main{max-width:1100px;margin:auto;padding:25px 20px 65px}
+.page{display:none}.page.active{display:block}.hidden{display:none!important}
+.hero{display:grid;grid-template-columns:1.2fr .8fr;gap:28px;align-items:center;padding:45px 0}
+.eyebrow{font-size:11px;letter-spacing:2px;text-transform:uppercase;font-weight:800;color:#98617b}
+h1{font-size:clamp(42px,6vw,72px);line-height:1.03;letter-spacing:-2px;margin:15px 0}
+h1 em{font-style:normal;color:#98617b}
+h2{font-size:27px;letter-spacing:-.6px;margin:0 0 8px}
+h3{margin:0 0 8px}
+.lead{color:var(--muted);font-size:17px;line-height:1.8;max-width:590px}
+.hero-art{min-height:260px;border-radius:30px;background:linear-gradient(140deg,#f0dfe4,#e3e9dc);display:grid;place-items:center;position:relative;overflow:hidden}
+.heart{width:160px;height:160px;border-radius:48% 52% 60% 40%;background:#fffaf4bb;display:grid;place-items:center;font-size:70px;box-shadow:0 18px 40px #713f5a13}
+.float{position:absolute;background:#fffdfaeb;padding:12px;border-radius:12px;font-size:13px}
+.float.a{top:20px;left:16px}.float.b{bottom:20px;right:16px}
+.row{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.between{justify-content:space-between}
+.grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:15px}
+.card{background:var(--paper);border:1px solid var(--line);border-radius:19px;padding:20px;box-shadow:0 12px 32px #4a26320a}
+.feature{background:#f1e5e6}.feature:nth-child(2){background:var(--sage)}.feature:nth-child(3){background:#f3e8dc}
+.section-head{display:flex;align-items:end;justify-content:space-between;gap:15px;margin:25px 0 17px}
+.form-card{max-width:500px;margin:30px auto}
+.avatar{width:48px;height:48px;flex-shrink:0;border-radius:17px;background:var(--rose);color:var(--plum);display:grid;place-items:center;font-weight:800;font-size:19px}
+.pill{display:inline-block;background:#eee6ed;color:var(--plum);border-radius:30px;padding:4px 9px;font-size:11px;font-weight:800}
+.status{white-space:pre-wrap;overflow-wrap:anywhere;font-size:13px;margin-top:12px}
+.error{color:var(--red)}.ok{color:#3d754f}
+.member{display:flex;flex-direction:column;gap:12px}
+.bio{color:var(--muted);font-size:14px;overflow-wrap:anywhere}
+.member-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:auto}
+.list-item{display:flex;align-items:center;gap:10px;padding:12px 0;border-bottom:1px solid var(--line);cursor:pointer}
+.list-item:last-child{border-bottom:0}
+.two{display:grid;grid-template-columns:300px minmax(0,1fr);gap:15px}
+.messages{display:flex;flex-direction:column;gap:9px;min-height:210px;max-height:430px;overflow:auto;padding:15px 0}
+.bubble{max-width:82%;background:#f1e7e9;padding:10px 13px;border-radius:14px;overflow-wrap:anywhere}
+.bubble.mine{align-self:flex-end;background:var(--plum);color:white}
+.bubble time{display:block;font-size:10px;opacity:.7;margin-top:5px}
+.send-row{display:flex;align-items:end;gap:8px}.send-row textarea{min-height:47px}
+.empty{text-align:center;color:var(--muted);padding:30px 12px}
+footer{text-align:center;color:var(--muted);font-size:12px;padding:25px;border-top:1px solid var(--line)}
+@media(max-width:760px){.hero{grid-template-columns:1fr;padding:25px 0}.hero-art{min-height:210px}.grid{grid-template-columns:repeat(2,minmax(0,1fr))}.two{grid-template-columns:1fr}.bar{padding:12px}.nav-scroll{width:100%;overflow:auto}nav{flex-wrap:nowrap}nav button{white-space:nowrap}main{padding:20px 14px 45px}}
+@media(max-width:480px){.grid{grid-template-columns:1fr}.card{padding:16px}h1{letter-spacing:-1.5px}.lead{font-size:15px}}
+</style>
+</head>
+<body>
+<header>
+ <div class="bar">
+  <div class="logo">♡ Unheard Soul</div>
+  <div class="nav-scroll"><nav id="nav">
+   <button class="active" data-page="home">Home</button>
+   <button class="auth-nav hidden" data-page="discover">Discover</button>
+   <button class="auth-nav hidden" data-page="requests">Requests</button>
+   <button class="auth-nav hidden" data-page="messages">Messages</button>
+   <button class="auth-nav hidden" data-page="profile">My profile</button>
+   <button id="loginNav" data-page="auth">Log in</button>
+  </nav></div>
+ </div>
+</header>
+<main>
+<section id="page-home" class="page active">
+ <div class="hero">
+  <div>
+   <div class="eyebrow">A little less alone</div>
+   <h1>Somewhere to be <em>yourself.</em></h1>
+   <p class="lead">Meet people beyond the noise. Start with a thoughtful hello, choose the connections you welcome, and make room for conversations that matter.</p>
+   <div class="row"><button class="primary" data-go="auth">Join the community ↗</button><button class="soft" data-go="discover">Discover members</button></div>
+   <p class="small muted">No public stories. No pressure to share everything. Just people, at their own pace.</p>
+  </div>
+  <div class="hero-art"><div class="float a">✦ A place to belong</div><div class="heart">♡</div><div class="float b">Glad I said hello.</div></div>
+ </div>
+ <div class="grid">
+  <article class="card feature"><h3>☁ Discover gently</h3><p class="muted">Explore member profiles and find people you may connect with.</p></article>
+  <article class="card feature"><h3>✉ A hello comes first</h3><p class="muted">Send a short chat request. The other person chooses whether to accept.</p></article>
+  <article class="card feature"><h3>♡ Privacy matters</h3><p class="muted">Private conversations, with blocking and reporting options.</p></article>
+ </div>
+ <div class="section-head"><h2>Come as you are.</h2></div>
+ <p class="lead">Unheard Soul is for real connections—not public posts or performance. Use a nickname, take your time, and decide who can message you.</p>
+</section>
+
+<section id="page-auth" class="page">
+ <div class="form-card card">
+  <div class="eyebrow">Your place is here</div><h2 id="authTitle">Welcome back</h2>
+  <p class="muted small" id="authSubtitle">Log in to reconnect with the community.</p>
+  <div id="signupFields" class="hidden">
+   <label for="nickname">Public nickname</label><input id="nickname" maxlength="32" placeholder="What should members call you?">
+  </div>
+  <label for="email">Email address</label><input id="email" type="email" autocomplete="email" placeholder="you@example.com">
+  <label for="password">Password</label><input id="password" type="password" autocomplete="current-password" minlength="8" placeholder="At least 8 characters">
+  <button class="primary" id="authSubmit" style="width:100%;margin-top:18px">Log in</button>
+  <p class="small"> <span id="switchText">New here?</span> <button class="soft" id="switchAuth">Create an account</button></p>
+  <p id="authStatus" class="status"></p>
+  <p class="small muted">Your email is for account access and is not shown on your public profile.</p>
+ </div>
+</section>
+
+<section id="page-discover" class="page">
+ <div class="section-head"><div><div class="eyebrow">People, not profiles to judge</div><h2>Discover members</h2><p class="muted">Find someone you’d like to say hello to.</p></div><button class="soft" id="refreshMembers">Refresh</button></div>
+ <div id="memberGrid" class="grid"></div><p id="discoverStatus" class="status"></p>
+</section>
+
+<section id="page-requests" class="page">
+ <div class="section-head"><div><div class="eyebrow">You choose the pace</div><h2>Chat requests</h2><p class="muted">Accept a request to open a private conversation.</p></div></div>
+ <div class="grid" id="requestGrid"></div><p id="requestStatus" class="status"></p>
+</section>
+
+<section id="page-messages" class="page">
+ <div class="section-head"><div><div class="eyebrow">One conversation at a time</div><h2>Private messages</h2></div></div>
+ <div class="two">
+  <div class="card"><h3>Your conversations</h3><div id="conversationList" class="muted small">Loading conversations…</div></div>
+  <div class="card">
+   <div id="chatHeading"><h3>Select a conversation</h3><p class="small muted">Messages are available after a request is accepted.</p></div>
+   <div id="messageList" class="messages"><div class="empty">Choose a conversation to begin.</div></div>
+   <div class="send-row"><textarea id="messageInput" maxlength="2000" placeholder="Write a thoughtful message…" disabled></textarea><button class="primary" id="sendButton" disabled>Send</button></div>
+   <p id="messageStatus" class="status"></p>
+  </div>
+ </div>
+</section>
+
+<section id="page-profile" class="page">
+ <div class="form-card card">
+  <div class="eyebrow">Your profile</div><h2>Show up as yourself</h2>
+  <label for="editNickname">Public nickname</label><input id="editNickname" maxlength="32" placeholder="Your nickname">
+  <label for="editBio">A little about you</label><textarea id="editBio" maxlength="240" placeholder="Share a little about yourself (optional)"></textarea>
+  <button class="primary" id="saveProfile">Save profile</button>
+  <p id="profileStatus" class="status"></p>
+  <hr style="border:0;border-top:1px solid var(--line);margin:25px 0">
+  <h3>Your safety</h3><p class="small muted">You can block members or report concerning behaviour from their profile cards.</p>
+  <button class="soft" id="logoutButton">Log out</button>
+ </div>
+</section>
+</main>
+<footer>Unheard Soul © 2026 · Made for meaningful connections</footer>
+
+<script>
+/*
+  SETUP:
+  1. Replace both placeholders with your Supabase Project URL and publishable key.
+  2. Never use the Supabase secret/service_role key in this file.
+  3. This frontend assumes the table/column names and RPC argument names
+     described in the setup notes. Verify them against your SQL before launch.
+*/
+const SUPABASE_URL = "https://hieirxacyqbbpjrygvld.supabase.co/rest/v1/";
+const SUPABASE_KEY = "sb_publishable_Nb3FMS7u2MGoCmz1Qx_ZVg_WHDpdbI7";
+
+const configured =
+  SUPABASE_URL.startsWith("https://") &&
+  SUPABASE_URL.endsWith(".supabase.co") &&
+  SUPABASE_KEY.startsWith("sb_publishable_") &&
+  window.supabase;
+
+const db = configured ? window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY) : null;
+let session = null, currentProfile = null, isSignup = false, activeConversation = null;
+let conversations = [], memberCache = [];
+
+const $ = id => document.getElementById(id);
+const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const initials = s => (String(s || "?").trim().slice(0,1).toUpperCase());
+function status(id,msg,error=false){const e=$(id);if(e){e.textContent=msg||"";e.className="status"+(msg?(error?" error":" ok"):"");}}
+function go(page){
+ if(page!=="home" && page!=="auth" && !session){page="auth";}
+ document.querySelectorAll(".page").forEach(p=>p.classList.toggle("active",p.id==="page-"+page));
+ document.querySelectorAll("nav button[data-page]").forEach(b=>b.classList.toggle("active",b.dataset.page===page));
+ if(page==="discover")loadMembers();
+ if(page==="requests")loadRequests();
+ if(page==="messages")loadConversations();
+ if(page==="profile")loadProfile();
+ window.scrollTo({top:0,behavior:"smooth"});
+}
+document.querySelectorAll("[data-page]").forEach(b=>b.addEventListener("click",()=>go(b.dataset.page)));
+document.querySelectorAll("[data-go]").forEach(b=>b.addEventListener("click",()=>go(b.dataset.go)));
+function setAuthUI(){
+ document.querySelectorAll(".auth-nav").forEach(b=>b.classList.toggle("hidden",!session));
+ $("loginNav").classList.toggle("hidden",!!session);
+ if(session) $("loginNav").textContent="Log out";
+ else $("loginNav").textContent="Log in";
+}
+$("loginNav").addEventListener("click",async()=>{
+ if(session) await logout(); else go("auth");
+});
+$("switchAuth").addEventListener("click",()=>{
+ isSignup=!isSignup;
+ $("signupFields").classList.toggle("hidden",!isSignup);
+ $("authTitle").textContent=isSignup?"Create your account":"Welcome back";
+ $("authSubtitle").textContent=isSignup?"Choose a nickname members can see.":"Log in to reconnect with the community.";
+ $("authSubmit").textContent=isSignup?"Create account":"Log in";
+ $("switchText").textContent=isSignup?"Already have an account?":"New here?";
+ $("switchAuth").textContent=isSignup?"Log in":"Create an account";
+ status("authStatus","");
+});
+async function ensureProfile(user){
+ // Profiles are created by the database signup trigger. Read the signed-in user's profile.
+ const {data,error}=await db.from("profiles").select("*").eq("user_id",user.id).maybeSingle();
+ if(error) throw error;
+ currentProfile=data;
+ if(!data) throw new Error("Your profile was not created by the database trigger. Check the Supabase signup trigger and profile schema.");
+}
+$("authSubmit").addEventListener("click",async()=>{
+ if(!db){status("authStatus","Add your Project URL and Publishable key in the code first.",true);return;}
+ const email=$("email").value.trim(), password=$("password").value;
+ if(!email||!password){status("authStatus","Enter your email and password.",true);return;}
+ if(password.length<8){status("authStatus","Use a password with at least 8 characters.",true);return;}
+ if(isSignup && !$("nickname").value.trim()){status("authStatus","Choose a public nickname.",true);return;}
+ $("authSubmit").disabled=true;status("authStatus",isSignup?"Creating your account…":"Logging in…");
+ try{
+  if(isSignup){
+   const nickname=$("nickname").value.trim();
+   const {data,error}=await db.auth.signUp({email,password,options:{data:{nickname}}});
+   if(error)throw error;
+   if(!data.session){
+    status("authStatus","Check your email for the confirmation link. After confirming, return here and log in.");
+   }else{
+    session=data.session;await ensureProfile(session.user);await refreshApp();go("discover");
+   }
+  }else{
+   const {data,error}=await db.auth.signInWithPassword({email,password});
+   if(error)throw error;
+   session=data.session;await ensureProfile(session.user);await refreshApp();go("discover");
+  }
+ }catch(e){status("authStatus",friendly(e),true);}
+ finally{$("authSubmit").disabled=false;}
+});
+function friendly(e){
+ const msg=e?.message||String(e);
+ if(/column .* does not exist|schema cache/i.test(msg))return "The website and database column names do not match. We need to adjust the code to your SQL schema. Details: "+msg;
+ return msg;
+}
+async function logout(){
+ if(db) await db.auth.signOut();
+ session=null;currentProfile=null;activeConversation=null;conversations=[];setAuthUI();go("home");
+}
+$("logoutButton").addEventListener("click",logout);
+
+async function refreshApp(){
+ setAuthUI();
+ if(!session)return;
+ try{await ensureProfile(session.user);}catch(e){console.error(e);}
+}
+async function loadProfile(){
+ if(!session)return;
+ try{
+  if(!currentProfile)await ensureProfile(session.user);
+  $("editNickname").value=currentProfile?.nickname||"";
+  $("editBio").value=currentProfile?.bio||"";
+ }catch(e){status("profileStatus",friendly(e),true);}
+}
+$("saveProfile").addEventListener("click",async()=>{
+ if(!session||!db)return;
+ const nickname=$("editNickname").value.trim(),bio=$("editBio").value.trim();
+ if(!nickname){status("profileStatus","A public nickname is required.",true);return;}
+ try{
+  const {data,error}=await db.from("profiles").update({nickname,bio}).eq("user_id",session.user.id).select().single();
+  if(error)throw error;currentProfile=data;status("profileStatus","Profile saved.");
+ }catch(e){status("profileStatus",friendly(e),true);}
+});
+
+async function loadMembers(){
+ if(!db||!session){$("memberGrid").innerHTML='<div class="card empty">Log in to discover community members.</div>';return;}
+ $("memberGrid").innerHTML='<div class="card empty">Loading members…</div>';
+ try{
+  const {data,error}=await db.from("profiles").select("user_id,nickname,bio,created_at").neq("user_id",session.user.id).order("created_at",{ascending:false}).limit(60);
+  if(error)throw error;
+  const {data:blocked,error:be}=await db.from("blocks").select("blocked_id,blocker_id");
+  if(be)throw be;
+  const excluded=new Set((blocked||[]).filter(x=>x.blocker_id===session.user.id||x.blocked_id===session.user.id).map(x=>x.blocker_id===session.user.id?x.blocked_id:x.blocker_id));
+  memberCache=(data||[]).filter(m=>!excluded.has(m.user_id));
+  $("memberGrid").innerHTML=memberCache.length?memberCache.map(memberCard).join(""):'<div class="card empty">No members to show yet. Invite a friend to join.</div>';
+ }catch(e){$("memberGrid").innerHTML="";status("discoverStatus","Could not load members. "+friendly(e),true);}
+}
+function memberCard(m){
+ return `<article class="card member"><div class="row"><div class="avatar">${esc(initials(m.nickname))}</div><div><h3>${esc(m.nickname||"Community member")}</h3><span class="pill">Member</span></div></div><p class="bio">${esc(m.bio||"Here to make meaningful connections.")}</p><div class="member-actions"><button class="primary" data-request="${esc(m.user_id)}">Say hello</button><button class="soft" data-report="${esc(m.user_id)}">Report</button><button class="danger" data-block="${esc(m.user_id)}">Block</button></div></article>`;
+}
+$("refreshMembers").addEventListener("click",loadMembers);
+$("memberGrid").addEventListener("click",async e=>{
+ const req=e.target.closest("[data-request]"), block=e.target.closest("[data-block]"), report=e.target.closest("[data-report]");
+ if(req){
+  const target=req.dataset.request, intro=prompt("Write a short introduction (up to 300 characters):");
+  if(intro===null)return;
+  const clean=intro.trim();if(!clean){alert("Write a short introduction first.");return;}
+  if(clean.length>300){alert("Please keep your introduction under 300 characters.");return;}
+  req.disabled=true;
+  try{
+   const {error}=await db.rpc("send_chat_request",{p_recipient_id:target,p_intro:clean});
+   if(error)throw error;alert("Your chat request was sent.");req.textContent="Request sent";
+  }catch(err){alert("Could not send request: "+friendly(err));req.disabled=false;}
+ }
+ if(block){
+  if(!confirm("Block this member? You should no longer see each other in discovery."))return;
+  try{
+   const {error}=await db.from("blocks").insert({blocker_id:session.user.id,blocked_id:block.dataset.block});
+   if(error)throw error;await loadMembers();
+  }catch(err){alert("Could not block member: "+friendly(err));}
+ }
+ if(report){
+  const reason=prompt("Briefly explain why you are reporting this member:");
+  if(reason===null)return;
+  if(!reason.trim())return alert("Please provide a reason.");
+  try{
+   const {error}=await db.from("reports").insert({reporter_id:session.user.id,reported_id:report.dataset.report,reason:reason.trim().slice(0,1000)});
+   if(error)throw error;alert("Report submitted. Thank you for helping keep the community safe.");
+  }catch(err){alert("Could not submit report: "+friendly(err));}
+ }
+});
+
+async function loadRequests(){
+ if(!session||!db)return;
+ $("requestGrid").innerHTML='<div class="card empty">Loading requests…</div>';
+ try{
+  const {data,error}=await db.from("chat_requests").select("*").eq("recipient_id",session.user.id).eq("status","pending").order("created_at",{ascending:false});
+  if(error)throw error;
+  const requests=data||[];
+  $("requestGrid").innerHTML=requests.length?requests.map(r=>`<article class="card"><span class="pill">Incoming request</span><h3 style="margin-top:12px">Someone wants to connect</h3><p class="muted">${esc(r.intro||"Hello! I'd like to connect.")}</p><div class="row"><button class="primary" data-accept="${esc(r.id)}">Accept</button><button class="soft" data-decline="${esc(r.id)}">Decline</button></div></article>`).join(""):'<div class="card empty">No pending requests right now.</div>';
+ }catch(e){$("requestGrid").innerHTML="";status("requestStatus","Could not load requests. "+friendly(e),true);}
+}
+$("requestGrid").addEventListener("click",async e=>{
+ const accept=e.target.closest("[data-accept]"),decline=e.target.closest("[data-decline]");
+ if(!accept&&!decline)return;
+ const id=(accept||decline).dataset.accept||(accept||decline).dataset.decline;
+ try{
+  const {error}=await db.rpc("respond_chat_request",{p_request_id:id,p_accept:!!accept});
+  if(error)throw error;await loadRequests();
+  if(accept){await loadConversations();alert("Request accepted. The conversation is now available in Messages.");}
+ }catch(err){alert("Could not respond: "+friendly(err));}
+});
+
+async function loadConversations(){
+ if(!session||!db)return;
+ $("conversationList").textContent="Loading…";
+ try{
+  const {data,error}=await db.from("conversations").select("*").or(`user1_id.eq.${session.user.id},user2_id.eq.${session.user.id}`).order("created_at",{ascending:false});
+  if(error)throw error;conversations=data||[];
+  if(!conversations.length){$("conversationList").innerHTML='<div class="empty">No conversations yet. Accept a chat request to begin.</div>';return;}
+  const ids=[...new Set(conversations.map(c=>c.user1_id===session.user.id?c.user2_id:c.user1_id))];
+  const {data:profiles,error:pe}=await db.from("profiles").select("user_id,nickname").in("user_id",ids);
+  if(pe)throw pe;
+  const names=Object.fromEntries((profiles||[]).map(p=>[p.user_id,p.nickname]));
+  $("conversationList").innerHTML=conversations.map(c=>{
+   const other=c.user1_id===session.user.id?c.user2_id:c.user1_id;
+   return `<div class="list-item" data-conversation="${esc(c.id)}"><div class="avatar">${esc(initials(names[other]))}</div><div><strong>${esc(names[other]||"Member")}</strong><div class="small muted">Private conversation</div></div></div>`;
+  }).join("");
+ }catch(e){$("conversationList").textContent="Could not load conversations: "+friendly(e);}
+}
+$("conversationList").addEventListener("click",e=>{
+ const item=e.target.closest("[data-conversation]");if(item)openConversation(item.dataset.conversation);
+});
+async function openConversation(id){
+ activeConversation=conversations.find(c=>String(c.id)===String(id));
+ if(!activeConversation)return;
+ $("messageInput").disabled=false;$("sendButton").disabled=false;
+ $("chatHeading").innerHTML="<h3>Private conversation</h3><p class='small muted'>Keep it kind. You can block or report a member from Discover.</p>";
+ await loadMessages();
+}
+async function loadMessages(){
+ if(!activeConversation)return;
+ $("messageList").innerHTML='<div class="empty">Loading messages…</div>';
+ try{
+  const {data,error}=await db.from("messages").select("*").eq("conversation_id",activeConversation.id).order("created_at",{ascending:true}).limit(200);
+  if(error)throw error;
+  $("messageList").innerHTML=(data||[]).map(m=>`<div class="bubble ${m.sender_id===session.user.id?"mine":""}">${esc(m.content)}<time>${esc(m.created_at?new Date(m.created_at).toLocaleString():"")}</time></div>`).join("")||'<div class="empty">Say hello and start the conversation.</div>';
+  $("messageList").scrollTop=$("messageList").scrollHeight;
+  status("messageStatus","");
+ }catch(e){$("messageList").innerHTML="";status("messageStatus","Could not load messages. "+friendly(e),true);}
+}
+$("sendButton").addEventListener("click",async()=>{
+ if(!activeConversation||!session)return;
+ const content=$("messageInput").value.trim();if(!content)return;
+ $("sendButton").disabled=true;
+ try{
+  const {error}=await db.rpc("send_message",{p_conversation_id:activeConversation.id,p_content:content});
+  if(error)throw error;$("messageInput").value="";await loadMessages();
+ }catch(e){status("messageStatus","Message not sent. "+friendly(e),true);}
+ finally{$("sendButton").disabled=false;}
+});
+$("messageInput").addEventListener("keydown",e=>{
+ if(e.key==="Enter"&&!e.shiftKey){e.preventDefault();$("sendButton").click();}
+});
+
+async function init(){
+ if(!db){
+  status("authStatus","Setup needed: replace the Project URL and Publishable key placeholders in this file.",true);
+  return;
+ }
+ try{
+  const {data,error}=await db.auth.getSession();if(error)throw error;
+  session=data.session;
+  if(session){await refreshApp();go("discover");}
+  else setAuthUI();
+  db.auth.onAuthStateChange((_event,newSession)=>{
+   session=newSession;
+   setAuthUI();
+  });
+ }catch(e){status("authStatus","Supabase setup error: "+friendly(e),true);}
+}
+init();
+</script>
+</body>
+</html>
+

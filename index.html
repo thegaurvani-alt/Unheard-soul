@@ -1,177 +1,205 @@
+<!-- FILE: index.html -->
 <!DOCTYPE html>
-<html lang="en"><head><meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Unheard Soul</title>
-<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Ccircle cx='16' cy='16' r='16' fill='%230F766E'/%3E%3Cpath d='M9 17a7 7 0 0 1 14 0v2a3 3 0 0 1-3 3h-1' fill='none' stroke='%23FAF8F4' stroke-width='2.5' stroke-linecap='round'/%3E%3Ccircle cx='16' cy='17' r='2' fill='%23E58C78'/%3E%3C/svg%3E">
-<style>
-:root{--teal:#0F766E;--lav:#E9E3F8;--bg:#FAF8F4;--coral:#E58C78;--ink:#1f2933;--card:#fff;--line:#e2ddd3;--mine:#0F766E;--mineink:#fff}
-@media(prefers-color-scheme:dark){:root{--bg:#0f1a1d;--ink:#e6edef;--card:#16262a;--line:#27393e;--lav:#2a2540;--mine:#14918a;--teal:#4fd1c5}}
-*{box-sizing:border-box}html,body{height:100%;margin:0}
-body{background:var(--bg);color:var(--ink);font:16px/1.5 Georgia,'Iowan Old Style',serif}
-button,input,textarea{font:inherit;color:inherit}
-h1,h2{font-weight:600;letter-spacing:-.01em;margin:0}
-:focus-visible{outline:3px solid var(--coral);outline-offset:2px}
-@media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
-.btn{background:var(--teal);color:#fff;border:0;border-radius:10px;padding:.6em 1.1em;cursor:pointer}
-@media(prefers-color-scheme:dark){.btn{color:#0f1a1d}}
-.btn.ghost{background:none;color:var(--teal);border:1px solid var(--line)}
-input,textarea{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:.6em .8em;width:100%}
-label{display:block;margin:.8em 0 .25em;font-size:.9rem}
-.auth{max-width:420px;margin:0 auto;padding:12vh 1.25rem 2rem}
-.auth h1{font-size:2.4rem;line-height:1.15}.auth p.tag{color:var(--teal);margin:.4em 0 1.5em}
-.msg{min-height:1.4em;margin-top:.8em;font-size:.9rem}.msg.err{color:#b4412c}
-@media(prefers-color-scheme:dark){.msg.err{color:#f2a08f}}
-.link{background:none;border:0;color:var(--teal);text-decoration:underline;cursor:pointer;padding:0}
-#app{display:grid;grid-template-columns:320px 1fr;height:100%}
-aside{border-right:1px solid var(--line);display:flex;flex-direction:column;min-height:0;background:var(--card)}
-.top{display:flex;justify-content:space-between;align-items:center;padding:.9rem 1rem;border-bottom:1px solid var(--line)}
-.list{overflow:auto;flex:1}
-.row{display:block;width:100%;text-align:left;background:none;border:0;border-bottom:1px solid var(--line);padding:.8rem 1rem;cursor:pointer}
-.row.on,.row:hover{background:var(--lav)}.row small{display:block;opacity:.7}
-.new{padding:.8rem 1rem;border-top:1px solid var(--line);display:flex;gap:.5rem}
-main{display:flex;flex-direction:column;min-height:0}
-.head{padding:.9rem 1rem;border-bottom:1px solid var(--line);display:flex;gap:.7rem;align-items:center}
-#msgs{flex:1;overflow:auto;padding:1rem;display:flex;flex-direction:column;gap:.4rem}
-.b{max-width:75%;padding:.5rem .8rem;border-radius:16px;background:var(--lav);align-self:flex-start;overflow-wrap:anywhere;white-space:pre-wrap}
-.b.me{background:var(--mine);color:var(--mineink);align-self:flex-end}
-.b time{display:block;font-size:.7rem;opacity:.7}
-.compose{display:flex;gap:.5rem;padding:.8rem 1rem;border-top:1px solid var(--line)}
-.compose textarea{resize:none;height:2.8em}
-.empty{margin:auto;text-align:center;opacity:.75;padding:2rem;max-width:30ch}
-.back{display:none}
-@media(max-width:700px){#app{grid-template-columns:1fr}#app.chat aside{display:none}#app:not(.chat) main{display:none}.back{display:inline-block}.b{max-width:88%}}
-</style></head><body>
-<div id="root"></div>
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
-<script>
-const SUPABASE_URL="https://hieirxacyqbbpjrygvld.supabase.co";
-const SUPABASE_KEY="sb_publishable_Nb3FMS7u2MGoCmz1Qx_ZVg_WHDpdbI7";
-const sb=supabase.createClient(SUPABASE_URL,SUPABASE_KEY);
-const $=(t,p={},...k)=>{const e=document.createElement(t);for(const[a,v]of Object.entries(p)){if(a.startsWith('on'))e.addEventListener(a.slice(2),v);else if(a==='class')e.className=v;else e.setAttribute(a,v)}k.flat().forEach(c=>e.append(c));return e};
-const root=document.getElementById('root');
-let me=null,convs=[],profs={},cur=null,chan=null,mode='login';
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Unheard Soul — Sanctuary Mesh</title>
+  
+  <!-- Global Engine Infrastructure CDNs -->
+  <script src="https://unpkg.com" crossorigin></script>
+  <script src="https://unpkg.com" crossorigin></script>
+  <script src="https://unpkg.com"></script>
+  <script src="https://unpkg.com"></script>
+  <script src="https://tailwindcss.com"></script>
 
-function field(id,label,type='text',auto){return[$('label',{for:id},label),$('input',{id,type,autocomplete:auto||'off'})]}
-function authView(){
-  const note=$('p',{class:'msg',role:'status'});
-  const say=(t,e)=>{note.textContent=t;note.className='msg'+(e?' err':'')};
-  const title={login:'Welcome back',signup:'Create your account',reset:'Reset your password'}[mode];
-  const f=$('form',{onsubmit:async ev=>{ev.preventDefault();say('Working…');
-    const email=f.email.value.trim(),pw=f.pw?f.pw.value:'';
-    try{
-      if(mode==='signup'){
-        if(pw.length<8)return say('Use a password of at least 8 characters.',1);
-        const{error}=await sb.auth.signUp({email,password:pw,options:{emailRedirectTo:location.href.split('#')[0]}});
-        if(error)throw error;say('Check your email to confirm your address, then log in.');
-      }else if(mode==='login'){
-        const{error}=await sb.auth.signInWithPassword({email,password:pw});if(error)throw error;
-      }else{
-        await sb.auth.resetPasswordForEmail(email,{redirectTo:location.href.split('#')[0]});
-        say('If that address has an account, a reset link is on its way.');
-      }
-    }catch(e){say(e.message||'Something went wrong. Try again.',1)}
-  }},...field('email','Email','email','email'),...(mode==='reset'?[]:field('pw','Password','password',mode==='login'?'current-password':'new-password')),
-    $('p',{},$('button',{class:'btn',type:'submit'},{login:'Log in',signup:'Sign up',reset:'Send reset link'}[mode])),note);
-  const sw=(m,t)=>$('button',{class:'link',type:'button',onclick:()=>{mode=m;render()}},t);
-  root.replaceChildren($('div',{class:'auth'},$('h1',{},'Unheard Soul'),$('p',{class:'tag'},'Your thoughts deserve a place to be heard.'),$('h2',{},title),f,
-    $('p',{},mode!=='login'?sw('login','Back to log in'):[sw('signup','Create an account'),' · ',sw('reset','Forgot password?')])));
-}
-function recoveryView(){
-  const note=$('p',{class:'msg',role:'status'});
-  const f=$('form',{onsubmit:async ev=>{ev.preventDefault();
-    if(f.pw.value.length<8){note.textContent='Use a password of at least 8 characters.';note.className='msg err';return}
-    const{error}=await sb.auth.updateUser({password:f.pw.value});
-    if(error){note.textContent=error.message;note.className='msg err'}else{history.replaceState(null,'',location.pathname);boot()}
-  }},...field('pw','New password','password','new-password'),$('p',{},$('button',{class:'btn'},'Save new password')),note);
-  root.replaceChildren($('div',{class:'auth'},$('h1',{},'Choose a new password'),f));
-}
-async function loadConvs(){
-  const{data}=await sb.from('conversations').select('*').order('created_at',{ascending:false});
-  convs=data||[];
-  const ids=[...new Set(convs.flatMap(c=>[c.user_a,c.user_b]))];
-  if(ids.length){const{data:p}=await sb.from('profiles').select('id,username,display_name').in('id',ids);(p||[]).forEach(x=>profs[x.id]=x)}
-}
-const other=c=>c.user_a===me.id?c.user_b:c.user_a;
-const nameOf=id=>{const p=profs[id];return p?(p.display_name||p.username||'Someone'):'Someone'};
-function shell(){
-  root.replaceChildren($('div',{id:'app'},
-    $('aside',{},$('div',{class:'top'},$('strong',{},'Unheard Soul'),$('button',{class:'btn ghost',onclick:()=>sb.auth.signOut()},'Log out')),
-      $('div',{class:'list',id:'list',role:'list'}),
-      $('form',{class:'new',onsubmit:newConv},$('input',{id:'nu',placeholder:'Start with a username','aria-label':'Username to message',maxlength:24}),$('button',{class:'btn'},'Ask'))),
-    $('main',{id:'main'})));
-  drawList();drawMain();
-}
-function drawList(){
-  const l=document.getElementById('list');if(!l)return;
-  if(!convs.length){l.replaceChildren($('div',{class:'empty'},'No conversations yet. Enter a username below to ask someone if they’d like to talk.'));return}
-  l.replaceChildren(...convs.map(c=>{
-    const inc=c.status==='pending'&&c.created_by!==me.id;
-    return $('button',{class:'row'+(cur&&cur.id===c.id?' on':''),role:'listitem',onclick:()=>open(c)},
-      nameOf(other(c)),$('small',{},inc?'Wants to talk to you':c.status==='pending'?'Waiting for them to accept':'Open'))}));
-}
-async function newConv(ev){
-  ev.preventDefault();const u=document.getElementById('nu');const name=u.value.trim().toLowerCase().replace(/^@/,'');if(!name)return;
-  const{data:p}=await sb.from('profiles').select('id').eq('username',name).maybeSingle();
-  if(!p)return alert('No one found with that username.');
-  if(p.id===me.id)return alert('That’s you.');
-  const[a,b]=[me.id,p.id].sort();
-  const{error}=await sb.from('conversations').insert({user_a:a,user_b:b,created_by:me.id});
-  if(error&&error.code!=='23505')return alert('Couldn’t send the request: '+error.message);
-  u.value='';await loadConvs();drawList();
-}
-async function open(c){
-  cur=c;document.getElementById('app').classList.add('chat');drawList();drawMain();
-  if(chan)sb.removeChannel(chan);
-  if(c.status!=='accepted')return;
-  const{data}=await sb.from('messages').select('*').eq('conversation_id',c.id).order('created_at',{ascending:false}).limit(50);
-  const box=document.getElementById('msgs');box.replaceChildren();
-  (data||[]).reverse().forEach(addMsg);
-  chan=sb.channel('c-'+c.id).on('postgres_changes',{event:'INSERT',schema:'public',table:'messages',filter:'conversation_id=eq.'+c.id},p=>addMsg(p.new)).subscribe();
-}
-function addMsg(m){
-  const box=document.getElementById('msgs');if(!box||!cur||m.conversation_id!==cur.id)return;
-  const old=box.querySelector('[data-cid="'+m.client_id+'"]');if(old)old.remove();
-  box.append($('div',{class:'b'+(m.sender_id===me.id?' me':''),'data-cid':m.client_id},m.body,$('time',{datetime:m.created_at},new Date(m.created_at).toLocaleTimeString([],{hour:'numeric',minute:'2-digit'}))));
-  box.scrollTop=box.scrollHeight;
-}
-function drawMain(){
-  const m=document.getElementById('main');if(!m)return;
-  if(!cur){m.replaceChildren($('div',{class:'empty'},$('h2',{},'Take your time'),$('p',{},'Pick a conversation, or ask someone new. Share only what you want to.')));return}
-  const head=$('div',{class:'head'},$('button',{class:'btn ghost back','aria-label':'Back to conversations',onclick:()=>{cur=null;document.getElementById('app').classList.remove('chat');drawList();drawMain()}},'Back'),$('strong',{},nameOf(other(cur))));
-  if(cur.status==='pending'){
-    const inc=cur.created_by!==me.id;
-    m.replaceChildren(head,$('div',{class:'empty'},inc?[$('p',{},nameOf(cur.created_by)+' would like to talk. You choose whether to reply.'),$('button',{class:'btn',onclick:accept},'Accept')]:$('p',{},'Request sent. You can message once they accept.')));return}
-  const ta=$('textarea',{placeholder:'Write at your own pace…','aria-label':'Message',maxlength:4000,onkeydown:e=>{if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();send()}}});
-  async function send(){
-    const body=ta.value.trim();if(!body)return;const client_id=crypto.randomUUID();ta.value='';
-    for(let i=0;i<3;i++){const{error}=await sb.from('messages').insert({conversation_id:cur.id,sender_id:me.id,body,client_id});
-      if(!error||error.code==='23505')return;await new Promise(r=>setTimeout(r,800*(i+1)))}
-    ta.value=body;alert('Message not sent. Check your connection and try again.');
-  }
-  m.replaceChildren(head,$('div',{id:'msgs','aria-live':'polite'}),$('div',{class:'compose'},ta,$('button',{class:'btn',onclick:send},'Send')));
-}
-async function accept(){
-  const{error}=await sb.from('conversations').update({status:'accepted'}).eq('id',cur.id);
-  if(error)return alert(error.message);await loadConvs();open(convs.find(c=>c.id===cur.id));
-}
-async function appView(){
-  const{data:p}=await sb.from('profiles').select('*').eq('id',me.id).single();
-  if(p&&!p.username){
-    const note=$('p',{class:'msg'});
-    const f=$('form',{onsubmit:async ev=>{ev.preventDefault();
-      const u=f.u.value.trim().toLowerCase();
-      const{error}=await sb.from('profiles').update({username:u,display_name:f.d.value.trim()||u}).eq('id',me.id);
-      if(error){note.textContent=/duplicate|unique/.test(error.message)?'That username is taken.':'Use 3–24 letters, numbers or underscores.';note.className='msg err'}else appView()
-    }},$('p',{},'Pick a username so people can find you. You don’t need to share your real name.'),...field('u','Username'),...field('d','Display name (optional)'),$('p',{},$('button',{class:'btn'},'Continue')),note);
-    root.replaceChildren($('div',{class:'auth'},$('h1',{},'Welcome'),f));return}
-  await loadConvs();shell();
-  sb.channel('convs').on('postgres_changes',{event:'*',schema:'public',table:'conversations'},async()=>{await loadConvs();drawList()}).subscribe();
-}
-function render(){me?appView():authView()}
-async function boot(){const{data}=await sb.auth.getSession();me=data.session?data.session.user:null;render()}
-sb.auth.onAuthStateChange((ev,s)=>{
-  if(ev==='PASSWORD_RECOVERY'){recoveryView();return}
-  const u=s?s.user:null;if((u&&u.id)!==(me&&me.id)){me=u;cur=null;profs={};render()}
-});
-boot();
-</script></body></html>
+  <style>
+    :root {
+      --color-bg-base: #FAF8F4;
+    }
+    body {
+      background-color: var(--color-bg-base);
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    }
+  </style>
+</head>
+<body>
+
+  <div id="root"></div>
+
+  <script type="text/babel">
+    // --- IDENTITY CRADLE INITIALIZATION ---
+    // Replace these values with your actual Supabase Project Key tokens
+    const SUPABASE_URL = "https://hieirxacyqbbpjrygvld.supabase.co"; 
+    const SUPABASE_ANON_KEY = "sb_publishable_Nb3FMS7u2MGoCmz1Qx_ZVg_WHDpdbI7";
+
+    const supabase = Supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+    // --- MESSAGING STATE CONFIGURATION ---
+    const ChatContext = React.createContext(undefined);
+
+    const ChatProvider = ({ children }) => {
+      const [activeConversationId, setActiveConversationId] = React.useState(null);
+      const [activeMessages, setActiveMessages] = React.useState([]);
+
+      React.useEffect(() => {
+        if (!activeConversationId) return;
+
+        // Synchronize chronological message log
+        supabase.from('messages')
+          .select('*')
+          .eq('conversation_id', activeConversationId)
+          .order('created_at', { ascending: true })
+          .then(({ data }) => { if (data) setActiveMessages(data); });
+
+        // Spin up persistent secure socket connection
+        const realTimeChannel = supabase.channel(`room:${activeConversationId}`)
+          .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'messages', filter: `conversation_id=eq.${activeConversationId}` }, 
+          (payload) => { setActiveMessages((prev) => [...prev, payload.new]); })
+          .subscribe();
+
+        return () => { supabase.removeChannel(realTimeChannel); };
+      }, [activeConversationId]);
+
+      const sendMessage = async (content) => {
+        if (!activeConversationId) return;
+        const userRes = await supabase.auth.getUser();
+        if (!userRes.data.user) return;
+
+        await supabase.from('messages').insert([{
+          conversation_id: activeConversationId,
+          content: content,
+          sender_id: userRes.data.user.id
+        }]);
+      };
+
+      return (
+        <ChatContext.Provider value={{ activeMessages, sendMessage, joinConversation: setActiveConversationId, activeConversationId }}>
+          {children}
+        </ChatContext.Provider>
+      );
+    };
+
+    const useChat = () => {
+      const context = React.useContext(ChatContext);
+      if (!context) throw new Error("useChat bound outside framework boundary error.");
+      return context;
+    };
+
+    // --- ACCESS GATEWAY WORKFLOWS ---
+    const AuthGate = () => {
+      const [isRegister, setIsRegister] = React.useState(false);
+      const [email, setEmail] = React.useState('');
+      const [password, setPassword] = React.useState('');
+      const [username, setUsername] = React.useState('');
+      const [errorMsg, setErrorMsg] = React.useState(null);
+
+      const handleSubmit = async (e) => {
+        e.preventDefault();
+        setErrorMsg(null);
+
+        if (isRegister) {
+          if (username.length < 3) { setErrorMsg("Pseudonym signature needs 3 characters minimum."); return; }
+          const { data, error } = await supabase.auth.signUp({ email, password });
+          if (error) { setErrorMsg(error.message); return; }
+          if (data.user) {
+            await supabase.from('profiles').insert([{ id: data.user.id, username, display_name: username }]);
+            alert("Safe signature recorded. Please verify via email loop sequence.");
+          }
+        } else {
+          const { error } = await supabase.auth.signInWithPassword({ email, password });
+          if (error) setErrorMsg("Boundary rejected matching profile validation vectors.");
+        }
+      };
+
+      return (
+        <div className="h-screen w-screen flex items-center justify-center p-4 text-stone-900 bg-[#FAF8F4]">
+          <form onSubmit={handleSubmit} className="flex flex-col gap-4 p-8 bg-white border border-stone-200 rounded-xl shadow-xl w-full max-w-md">
+            <h2 className="text-2xl font-bold text-teal-800 text-center">{isRegister ? 'Generate Pseudonym' : 'Access Safe Sanctuary'}</h2>
+            
+            {isRegister && (
+              <div>
+                <label className="block text-xs font-semibold uppercase tracking-wider mb-1 text-stone-500">Pseudonym Signature</label>
+                <input type="text" required value={username} onChange={(e) => setUsername(e.target.value)} className="w-full px-3 py-2 border rounded border-stone-300 focus:ring-2 focus:ring-teal-700 outline-none transition bg-transparent" placeholder="e.g. silent_soul" />
+              </div>
+            )}
+            
+            <div>
+              <label className="block text-xs font-semibold uppercase tracking-wider mb-1 text-stone-500">Identity Vector (Email)</label>
+              <input type="email" required value={email} onChange={(e) => setEmail(e.target.value)} className="w-full px-3 py-2 border rounded border-stone-300 focus:ring-2 focus:ring-teal-700 outline-none transition bg-transparent" />
+            </div>
+            
+            <div>
+              <label className="block text-xs font-semibold uppercase tracking-wider mb-1 text-stone-500">Secret Token Marker (Password)</label>
+              <input type="password" required value={password} onChange={(e) => setPassword(e.target.value)} className="w-full px-3 py-2 border rounded border-stone-300 focus:ring-2 focus:ring-teal-700 outline-none transition bg-transparent" />
+            </div>
+
+            {errorMsg && <p role="alert" className="text-xs text-red-500 font-medium">{errorMsg}</p>}
+            
+            <button type="submit" className="w-full bg-teal-800 hover:bg-teal-900 text-white font-medium py-2 rounded transition shadow-sm">
+              {isRegister ? 'Instantiate Node Profile' : 'Authenticate Identity'}
+            </button>
+            
+            <button type="button" onClick={() => setIsRegister(!isRegister)} className="text-xs text-teal-700 hover:underline text-center mt-2">
+              {isRegister ? 'Already verified state vectors? Login' : 'Need an isolated identity handle? Register'}
+            </button>
+          </form>
+        </div>
+      );
+    };
+
+    // --- SECURE WORKSPACE CORE PANEL ---
+    const InnerSanctuaryChatView = () => {
+      const { activeMessages, sendMessage, joinConversation, activeConversationId } = useChat();
+      const [inputMsg, setInputMsg] = React.useState('');
+      const [rooms, setRooms] = React.useState([]);
+
+      React.useEffect(() => {
+        supabase.from('conversation_participants')
+          .select('conversation_id, conversations(created_at)')
+          .then(({ data }) => { if (data) setRooms(data.map((item) => item.conversations)); });
+      }, []);
+
+      const handleSend = async (e) => {
+        e.preventDefault();
+        if (!inputMsg.trim()) return;
+        await sendMessage(inputMsg);
+        setInputMsg('');
+      };
+
+      const allocateNewMatrixNode = async () => {
+        const userRes = await supabase.auth.getUser();
+        if (!userRes.data.user) return;
+        
+        const { data: conv } = await supabase.from('conversations').insert([{}].map(() => ({}))).select().single();
+        if (conv) {
+          await supabase.from('conversation_participants').insert([{ conversation_id: conv.id, user_id: userRes.data.user.id }]);
+          setRooms((prev) => [...prev, conv]);
+          joinConversation(conv.id);
+        }
+      };
+
+      return (
+        <div className="flex h-screen w-screen bg-stone-50 text-stone-900">
+          <aside className="w-80 border-r border-stone-200 flex flex-col p-4 bg-white shadow-sm">
+            <div className="flex items-center justify-between mb-6">
+              <h1 className="text-xl font-bold tracking-tight text-teal-800">Unheard Soul</h1>
+              <button onClick={() => supabase.auth.signOut()} className="text-[10px] font-semibold border px-2 py-1 rounded bg-stone-50 hover:bg-stone-100 uppercase tracking-wide">Disconnect</button>
+            </div>
+            <button onClick={allocateNewMatrixNode} className="w-full bg-teal-800 hover:bg-teal-900 text-white font-medium py-2 rounded-lg mb-4 transition text-sm shadow-sm">Request Soul-Link Partition</button>
+            <div className="flex-1 overflow-y-auto space-y-1">
+              {rooms.map((r) => (
+                <button key={r.id} onClick={() => joinConversation(r.id)} className={`w-full p-3 text-left rounded-lg transition text-xs border ${activeConversationId === r.id ? 'bg-teal-50 border-teal-600 text-teal-950 font-semibold' : 'border-transparent hover:bg-stone-50'}`}>
+                  <p className="truncate font-medium">Secure Channel Node</p>
+                  <p className="opacity-60 text-[10px] mt-0.5">{new Date(r.created_at).toLocaleString()}</p>
+                </button>
+              ))}
+            </div>
+          </aside>
+
+          <main className="flex-1 flex flex-col bg-[#FAF8F4]">
+            {activeConversationId ? (
+              <>
+                <div className="flex-1 overflow-y-auto p-6 space-y-4">
+                  {activeMessages.map((m) => (
+                    <div key={m.id} className="flex w-full justify-start">

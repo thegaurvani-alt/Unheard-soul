@@ -1,389 +1,177 @@
 <!DOCTYPE html>
-<html lang="en" data-theme="dark">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<meta name="theme-color" content="#0b1020">
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Unheard Soul</title>
-<meta name="description" content="A gentle community where you can meet people, say hello, and talk privately when you both want to.">
-<meta property="og:title" content="Unheard Soul">
-<meta property="og:description" content="Your story. Your voice. Meet people and talk privately.">
-<meta property="og:type" content="website">
-<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%230b1020'/%3E%3Cpath d='M20 6a10 10 0 1 0 6 14 8 8 0 0 1-6-14z' fill='%23b9a2ff'/%3E%3C/svg%3E">
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Ccircle cx='16' cy='16' r='16' fill='%230F766E'/%3E%3Cpath d='M9 17a7 7 0 0 1 14 0v2a3 3 0 0 1-3 3h-1' fill='none' stroke='%23FAF8F4' stroke-width='2.5' stroke-linecap='round'/%3E%3Ccircle cx='16' cy='17' r='2' fill='%23E58C78'/%3E%3C/svg%3E">
 <style>
-:root{--bg:#0b1020;--s:#151c30;--s2:#1d2740;--ac:#b9a2ff;--tx:#f4f5fb;--mu:#a7b0c6;--bd:#303a54;--er:#ff8b9a;--ok:#8ee0b0;--ink:#15112a;--r:14px}
-[data-theme=light]{--bg:#faf8f4;--s:#fff;--s2:#f1edf6;--ac:#6b55b5;--tx:#20232b;--mu:#62646b;--bd:#e6e1ea;--er:#b3261e;--ok:#1b7a4b;--ink:#fff}
-*{box-sizing:border-box}
-body{margin:0;background:var(--bg);color:var(--tx);font:16px/1.6 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;min-height:100vh;display:flex;flex-direction:column}
-h1,h2{font-family:"Iowan Old Style",Georgia,serif;font-weight:500;line-height:1.2}
-h1{font-size:clamp(30px,6vw,44px);margin:8px 0 12px}h2{font-size:22px;margin:0 0 8px}
-a{color:var(--ac)}button,input,textarea,select{font:inherit}
-header{position:sticky;top:0;z-index:5;background:var(--bg);border-bottom:1px solid var(--bd)}
-.top{max-width:960px;margin:auto;padding:10px 16px;display:flex;gap:6px 14px;align-items:center;flex-wrap:wrap}
-.brand{font:500 22px Georgia,serif;color:var(--tx);text-decoration:none;margin-right:auto}.brand b{color:var(--ac)}
-#nav{display:flex;gap:4px 12px;align-items:center;flex-wrap:wrap}#nav a{color:var(--tx);text-decoration:none;padding:6px 4px}
-#nav a.on{color:var(--ac);font-weight:700}
-.wrap{max-width:960px;margin:0 auto;padding:24px 16px 56px;width:100%;flex:1}
-.narrow{max-width:480px}
-.mu{color:var(--mu)}.s{font-size:14px}.err{color:var(--er)}
-.btn{display:inline-block;border:1px solid var(--bd);background:var(--s2);color:var(--tx);border-radius:11px;padding:9px 16px;cursor:pointer;text-decoration:none}
-.btn.p{background:var(--ac);border-color:var(--ac);color:var(--ink);font-weight:700}.btn.d{color:var(--er)}
-.btn:disabled{opacity:.5;cursor:wait}.ic{background:none;border:0;color:var(--tx);cursor:pointer;font-size:18px}
-:focus-visible{outline:3px solid var(--ac);outline-offset:2px}
-label{display:block;margin:14px 0 5px;font-size:14px}
-input,textarea,select{width:100%;padding:11px;color:var(--tx);background:var(--s);border:1px solid var(--bd);border-radius:10px}
-textarea{min-height:90px;resize:vertical}
-.card,.panel{background:var(--s);border:1px solid var(--bd);border-radius:var(--r);padding:18px}
-.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:12px;margin:16px 0}
-.mem{display:flex;gap:12px;text-decoration:none;color:var(--tx)}.mem:hover{border-color:var(--ac)}.mem p{margin:4px 0}
-.av{flex:none;width:46px;height:46px;border-radius:50%;background:var(--s2);color:var(--ac);display:grid;place-items:center;font-weight:800;font-size:20px}
-.chip{display:inline-block;border:1px solid var(--bd);border-radius:99px;padding:0 9px;margin:2px 4px 2px 0;font-size:13px;color:var(--mu)}
-.hero{padding:44px 18px;text-align:center;border:1px solid var(--bd);border-radius:22px;background:radial-gradient(ellipse at top,var(--s2),var(--s))}
-.hero p{max-width:520px;margin:0 auto 18px}
-.row{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin:12px 0}
-.item{display:flex;gap:12px;align-items:center;justify-content:space-between;flex-wrap:wrap;margin:10px 0}
-.dot{display:inline-block;width:9px;height:9px;border-radius:50%;background:var(--ac);margin-right:6px}
-.msgs{display:flex;flex-direction:column;gap:8px;margin:14px 0;min-height:40vh}
-.m{max-width:80%;padding:9px 13px;border-radius:14px;background:var(--s2);overflow-wrap:anywhere;white-space:pre-wrap}
-.m.me{align-self:flex-end;background:var(--ac);color:var(--ink)}.m small{display:block;opacity:.7;font-size:11px}
-.m button{background:none;border:0;color:inherit;opacity:.7;font-size:11px;cursor:pointer;padding:0 0 0 6px;text-decoration:underline}
-dialog{max-width:440px;width:calc(100% - 24px);background:var(--s);color:var(--tx);border:1px solid var(--bd);border-radius:var(--r);padding:20px}
-dialog::backdrop{background:rgba(0,0,0,.6)}
-footer{border-top:1px solid var(--bd);text-align:center;padding:20px 12px;color:var(--mu);font-size:14px}
-footer a{margin:0 8px}
-#toast{position:fixed;left:50%;bottom:22px;transform:translateX(-50%);background:var(--s2);border:1px solid var(--bd);padding:10px 16px;border-radius:10px;opacity:0;pointer-events:none;max-width:90%}
-#toast.show{opacity:1;transition:opacity .2s}#toast.bad{color:var(--er)}
-@media(prefers-reduced-motion:reduce){*{transition:none!important;scroll-behavior:auto!important}}
-</style>
-</head>
-<body>
-<header><div class="top"><a class="brand" href="#/">Unheard <b>Soul</b></a><nav id="nav" aria-label="Main"></nav></div></header>
-<main id="app" class="wrap" tabindex="-1"></main>
-<footer>
-  <a href="#/privacy">Privacy</a><a href="#/terms">Terms</a><a href="#/guidelines">Guidelines</a><a href="#/help">Help</a>
-  <div>&copy; <span id="yr"></span> Unheard Soul</div>
-</footer>
-<div id="toast" role="status" aria-live="polite"></div>
-
+:root{--teal:#0F766E;--lav:#E9E3F8;--bg:#FAF8F4;--coral:#E58C78;--ink:#1f2933;--card:#fff;--line:#e2ddd3;--mine:#0F766E;--mineink:#fff}
+@media(prefers-color-scheme:dark){:root{--bg:#0f1a1d;--ink:#e6edef;--card:#16262a;--line:#27393e;--lav:#2a2540;--mine:#14918a;--teal:#4fd1c5}}
+*{box-sizing:border-box}html,body{height:100%;margin:0}
+body{background:var(--bg);color:var(--ink);font:16px/1.5 Georgia,'Iowan Old Style',serif}
+button,input,textarea{font:inherit;color:inherit}
+h1,h2{font-weight:600;letter-spacing:-.01em;margin:0}
+:focus-visible{outline:3px solid var(--coral);outline-offset:2px}
+@media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+.btn{background:var(--teal);color:#fff;border:0;border-radius:10px;padding:.6em 1.1em;cursor:pointer}
+@media(prefers-color-scheme:dark){.btn{color:#0f1a1d}}
+.btn.ghost{background:none;color:var(--teal);border:1px solid var(--line)}
+input,textarea{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:.6em .8em;width:100%}
+label{display:block;margin:.8em 0 .25em;font-size:.9rem}
+.auth{max-width:420px;margin:0 auto;padding:12vh 1.25rem 2rem}
+.auth h1{font-size:2.4rem;line-height:1.15}.auth p.tag{color:var(--teal);margin:.4em 0 1.5em}
+.msg{min-height:1.4em;margin-top:.8em;font-size:.9rem}.msg.err{color:#b4412c}
+@media(prefers-color-scheme:dark){.msg.err{color:#f2a08f}}
+.link{background:none;border:0;color:var(--teal);text-decoration:underline;cursor:pointer;padding:0}
+#app{display:grid;grid-template-columns:320px 1fr;height:100%}
+aside{border-right:1px solid var(--line);display:flex;flex-direction:column;min-height:0;background:var(--card)}
+.top{display:flex;justify-content:space-between;align-items:center;padding:.9rem 1rem;border-bottom:1px solid var(--line)}
+.list{overflow:auto;flex:1}
+.row{display:block;width:100%;text-align:left;background:none;border:0;border-bottom:1px solid var(--line);padding:.8rem 1rem;cursor:pointer}
+.row.on,.row:hover{background:var(--lav)}.row small{display:block;opacity:.7}
+.new{padding:.8rem 1rem;border-top:1px solid var(--line);display:flex;gap:.5rem}
+main{display:flex;flex-direction:column;min-height:0}
+.head{padding:.9rem 1rem;border-bottom:1px solid var(--line);display:flex;gap:.7rem;align-items:center}
+#msgs{flex:1;overflow:auto;padding:1rem;display:flex;flex-direction:column;gap:.4rem}
+.b{max-width:75%;padding:.5rem .8rem;border-radius:16px;background:var(--lav);align-self:flex-start;overflow-wrap:anywhere;white-space:pre-wrap}
+.b.me{background:var(--mine);color:var(--mineink);align-self:flex-end}
+.b time{display:block;font-size:.7rem;opacity:.7}
+.compose{display:flex;gap:.5rem;padding:.8rem 1rem;border-top:1px solid var(--line)}
+.compose textarea{resize:none;height:2.8em}
+.empty{margin:auto;text-align:center;opacity:.75;padding:2rem;max-width:30ch}
+.back{display:none}
+@media(max-width:700px){#app{grid-template-columns:1fr}#app.chat aside{display:none}#app:not(.chat) main{display:none}.back{display:inline-block}.b{max-width:88%}}
+</style></head><body>
+<div id="root"></div>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
 <script>
-"use strict";
-/* ===== SETTINGS ===== */
-const CONTACT_EMAIL = "your-email@example.com"; // change this to a real address
-const db = supabase.createClient("https://hieirxacyqbbpjrygvld.supabase.co", "sb_publishable_Nb3FMS7u2MGoCmz1Qx_ZVg_WHDpdbI7");
+const SUPABASE_URL="https://hieirxacyqbbpjrygvld.supabase.co";
+const SUPABASE_KEY="sb_publishable_Nb3FMS7u2MGoCmz1Qx_ZVg_WHDpdbI7";
+const sb=supabase.createClient(SUPABASE_URL,SUPABASE_KEY);
+const $=(t,p={},...k)=>{const e=document.createElement(t);for(const[a,v]of Object.entries(p)){if(a.startsWith('on'))e.addEventListener(a.slice(2),v);else if(a==='class')e.className=v;else e.setAttribute(a,v)}k.flat().forEach(c=>e.append(c));return e};
+const root=document.getElementById('root');
+let me=null,convs=[],profs={},cur=null,chan=null,mode='login';
 
-let me = null, prof = null, unread = 0, chan = null, nchan = null;
-const $ = s => document.querySelector(s);
-const h = (t, a = {}, ...k) => {
-  const e = document.createElement(t);
-  for (const x in a) { const v = a[x];
-    if (x.startsWith("on")) e.addEventListener(x.slice(2), v);
-    else if (x === "class") e.className = v;
-    else if (v !== false && v != null) e.setAttribute(x, v === true ? "" : v); }
-  k.flat(9).forEach(c => { if (c != null && c !== false) e.append(c); });
-  return e;
-};
-const toast = (m, bad) => { const t = $("#toast"); t.textContent = m; t.className = "show" + (bad ? " bad" : ""); clearTimeout(toast.i); toast.i = setTimeout(() => t.className = "", 3200); };
-const go = p => { location.hash = "#/" + p; };
-const when = s => new Date(s).toLocaleString([], { dateStyle: "medium", timeStyle: "short" });
-const clean = v => v.trim().replace(/^@/, "").toLowerCase();
-const okName = v => /^[a-z0-9_]{3,24}$/.test(v);
-const rpc = async (f, a) => { const { data, error } = await db.rpc(f, a); if (error) throw error; return data; };
-const busy = async (b, fn) => { b.disabled = true; try { await fn(); } catch (e) { toast(e.message || "Something went wrong. Check your connection.", 1); } finally { b.disabled = false; } };
-const F = (id, label, a = {}) => [h("label", { for: id }, label), h(a.rows ? "textarea" : "input", { id, ...a })];
-const av = m => h("div", { class: "av", "aria-hidden": "true" }, ((m && (m.display_name || m.username)) || "?").charAt(0).toUpperCase());
-const chips = a => (a || []).map(x => h("span", { class: "chip" }, x));
-const empty = t => h("p", { class: "mu card" }, t);
-const names = async ids => { ids = [...new Set(ids.filter(Boolean))]; if (!ids.length) return {};
-  const { data } = await db.from("profiles").select("id,username,display_name").in("id", ids);
-  return Object.fromEntries((data || []).map(p => [p.id, p])); };
-const nm = (m, id) => (m[id] && m[id].display_name) || "A member";
-
-function ask(title, body, ok, label = "Confirm") {
-  const d = h("dialog", { "aria-label": title }, h("h2", {}, title), ...body,
-    h("div", { class: "row" }, h("button", { class: "btn", onclick: () => d.close() }, "Cancel"),
-      h("button", { class: "btn p", onclick: async e => { e.target.disabled = true;
-        try { await ok(); d.close(); } catch (x) { toast(x.message, 1); e.target.disabled = false; } } }, label)));
-  d.addEventListener("close", () => d.remove()); document.body.append(d); d.showModal();
+function field(id,label,type='text',auto){return[$('label',{for:id},label),$('input',{id,type,autocomplete:auto||'off'})]}
+function authView(){
+  const note=$('p',{class:'msg',role:'status'});
+  const say=(t,e)=>{note.textContent=t;note.className='msg'+(e?' err':'')};
+  const title={login:'Welcome back',signup:'Create your account',reset:'Reset your password'}[mode];
+  const f=$('form',{onsubmit:async ev=>{ev.preventDefault();say('Working…');
+    const email=f.email.value.trim(),pw=f.pw?f.pw.value:'';
+    try{
+      if(mode==='signup'){
+        if(pw.length<8)return say('Use a password of at least 8 characters.',1);
+        const{error}=await sb.auth.signUp({email,password:pw,options:{emailRedirectTo:location.href.split('#')[0]}});
+        if(error)throw error;say('Check your email to confirm your address, then log in.');
+      }else if(mode==='login'){
+        const{error}=await sb.auth.signInWithPassword({email,password:pw});if(error)throw error;
+      }else{
+        await sb.auth.resetPasswordForEmail(email,{redirectTo:location.href.split('#')[0]});
+        say('If that address has an account, a reset link is on its way.');
+      }
+    }catch(e){say(e.message||'Something went wrong. Try again.',1)}
+  }},...field('email','Email','email','email'),...(mode==='reset'?[]:field('pw','Password','password',mode==='login'?'current-password':'new-password')),
+    $('p',{},$('button',{class:'btn',type:'submit'},{login:'Log in',signup:'Sign up',reset:'Send reset link'}[mode])),note);
+  const sw=(m,t)=>$('button',{class:'link',type:'button',onclick:()=>{mode=m;render()}},t);
+  root.replaceChildren($('div',{class:'auth'},$('h1',{},'Unheard Soul'),$('p',{class:'tag'},'Your thoughts deserve a place to be heard.'),$('h2',{},title),f,
+    $('p',{},mode!=='login'?sw('login','Back to log in'):[sw('signup','Create an account'),' · ',sw('reset','Forgot password?')])));
 }
-function reportDlg(uid, mid) {
-  const c = h("select", { id: "rc" }, ["Harassment", "Spam", "Hate or abuse", "Self-harm concern", "Impersonation", "Other"].map(x => h("option", {}, x)));
-  const t = h("textarea", { id: "rt", maxlength: "1000", placeholder: "Optional details" });
-  ask(mid ? "Report message" : "Report member", [h("label", { for: "rc" }, "Reason"), c, h("label", { for: "rt" }, "Details"), t],
-    async () => { const { error } = await db.from("reports").insert({ reporter_id: me.id, target_user_id: uid, message_id: mid || null, category: c.value, details: t.value.trim() || null });
-      if (error) throw error; toast("Report sent. Thank you."); }, "Send report");
+function recoveryView(){
+  const note=$('p',{class:'msg',role:'status'});
+  const f=$('form',{onsubmit:async ev=>{ev.preventDefault();
+    if(f.pw.value.length<8){note.textContent='Use a password of at least 8 characters.';note.className='msg err';return}
+    const{error}=await sb.auth.updateUser({password:f.pw.value});
+    if(error){note.textContent=error.message;note.className='msg err'}else{history.replaceState(null,'',location.pathname);boot()}
+  }},...field('pw','New password','password','new-password'),$('p',{},$('button',{class:'btn'},'Save new password')),note);
+  root.replaceChildren($('div',{class:'auth'},$('h1',{},'Choose a new password'),f));
 }
-function blockDlg(uid, name, after) {
-  ask("Block " + name + "?", [h("p", { class: "mu" }, "You will no longer see each other, and any pending request is cancelled.")],
-    async () => { await rpc("block_user", { p_id: uid }); toast("Blocked."); after(); }, "Block");
+async function loadConvs(){
+  const{data}=await sb.from('conversations').select('*').order('created_at',{ascending:false});
+  convs=data||[];
+  const ids=[...new Set(convs.flatMap(c=>[c.user_a,c.user_b]))];
+  if(ids.length){const{data:p}=await sb.from('profiles').select('id,username,display_name').in('id',ids);(p||[]).forEach(x=>profs[x.id]=x)}
 }
-
-/* ===== SESSION ===== */
-async function loadProf() {
-  let { data } = await db.from("profiles").select("*").eq("id", me.id).maybeSingle();
-  if (!data) {
-    const m = me.user_metadata || {}; let u = clean(m.username || "");
-    if (!okName(u)) u = "member_" + me.id.replace(/-/g, "").slice(0, 10);
-    const ins = n => db.from("profiles").insert({ id: me.id, username: n, display_name: (m.display_name || "New member").slice(0, 60) }).select().maybeSingle();
-    let r = await ins(u);
-    if (r.error && r.error.code === "23505") r = await ins("member_" + me.id.replace(/-/g, "").slice(0, 10));
-    data = r.data;
+const other=c=>c.user_a===me.id?c.user_b:c.user_a;
+const nameOf=id=>{const p=profs[id];return p?(p.display_name||p.username||'Someone'):'Someone'};
+function shell(){
+  root.replaceChildren($('div',{id:'app'},
+    $('aside',{},$('div',{class:'top'},$('strong',{},'Unheard Soul'),$('button',{class:'btn ghost',onclick:()=>sb.auth.signOut()},'Log out')),
+      $('div',{class:'list',id:'list',role:'list'}),
+      $('form',{class:'new',onsubmit:newConv},$('input',{id:'nu',placeholder:'Start with a username','aria-label':'Username to message',maxlength:24}),$('button',{class:'btn'},'Ask'))),
+    $('main',{id:'main'})));
+  drawList();drawMain();
+}
+function drawList(){
+  const l=document.getElementById('list');if(!l)return;
+  if(!convs.length){l.replaceChildren($('div',{class:'empty'},'No conversations yet. Enter a username below to ask someone if they’d like to talk.'));return}
+  l.replaceChildren(...convs.map(c=>{
+    const inc=c.status==='pending'&&c.created_by!==me.id;
+    return $('button',{class:'row'+(cur&&cur.id===c.id?' on':''),role:'listitem',onclick:()=>open(c)},
+      nameOf(other(c)),$('small',{},inc?'Wants to talk to you':c.status==='pending'?'Waiting for them to accept':'Open'))}));
+}
+async function newConv(ev){
+  ev.preventDefault();const u=document.getElementById('nu');const name=u.value.trim().toLowerCase().replace(/^@/,'');if(!name)return;
+  const{data:p}=await sb.from('profiles').select('id').eq('username',name).maybeSingle();
+  if(!p)return alert('No one found with that username.');
+  if(p.id===me.id)return alert('That’s you.');
+  const[a,b]=[me.id,p.id].sort();
+  const{error}=await sb.from('conversations').insert({user_a:a,user_b:b,created_by:me.id});
+  if(error&&error.code!=='23505')return alert('Couldn’t send the request: '+error.message);
+  u.value='';await loadConvs();drawList();
+}
+async function open(c){
+  cur=c;document.getElementById('app').classList.add('chat');drawList();drawMain();
+  if(chan)sb.removeChannel(chan);
+  if(c.status!=='accepted')return;
+  const{data}=await sb.from('messages').select('*').eq('conversation_id',c.id).order('created_at',{ascending:false}).limit(50);
+  const box=document.getElementById('msgs');box.replaceChildren();
+  (data||[]).reverse().forEach(addMsg);
+  chan=sb.channel('c-'+c.id).on('postgres_changes',{event:'INSERT',schema:'public',table:'messages',filter:'conversation_id=eq.'+c.id},p=>addMsg(p.new)).subscribe();
+}
+function addMsg(m){
+  const box=document.getElementById('msgs');if(!box||!cur||m.conversation_id!==cur.id)return;
+  const old=box.querySelector('[data-cid="'+m.client_id+'"]');if(old)old.remove();
+  box.append($('div',{class:'b'+(m.sender_id===me.id?' me':''),'data-cid':m.client_id},m.body,$('time',{datetime:m.created_at},new Date(m.created_at).toLocaleTimeString([],{hour:'numeric',minute:'2-digit'}))));
+  box.scrollTop=box.scrollHeight;
+}
+function drawMain(){
+  const m=document.getElementById('main');if(!m)return;
+  if(!cur){m.replaceChildren($('div',{class:'empty'},$('h2',{},'Take your time'),$('p',{},'Pick a conversation, or ask someone new. Share only what you want to.')));return}
+  const head=$('div',{class:'head'},$('button',{class:'btn ghost back','aria-label':'Back to conversations',onclick:()=>{cur=null;document.getElementById('app').classList.remove('chat');drawList();drawMain()}},'Back'),$('strong',{},nameOf(other(cur))));
+  if(cur.status==='pending'){
+    const inc=cur.created_by!==me.id;
+    m.replaceChildren(head,$('div',{class:'empty'},inc?[$('p',{},nameOf(cur.created_by)+' would like to talk. You choose whether to reply.'),$('button',{class:'btn',onclick:accept},'Accept')]:$('p',{},'Request sent. You can message once they accept.')));return}
+  const ta=$('textarea',{placeholder:'Write at your own pace…','aria-label':'Message',maxlength:4000,onkeydown:e=>{if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();send()}}});
+  async function send(){
+    const body=ta.value.trim();if(!body)return;const client_id=crypto.randomUUID();ta.value='';
+    for(let i=0;i<3;i++){const{error}=await sb.from('messages').insert({conversation_id:cur.id,sender_id:me.id,body,client_id});
+      if(!error||error.code==='23505')return;await new Promise(r=>setTimeout(r,800*(i+1)))}
+    ta.value=body;alert('Message not sent. Check your connection and try again.');
   }
-  prof = data;
+  m.replaceChildren(head,$('div',{id:'msgs','aria-live':'polite'}),$('div',{class:'compose'},ta,$('button',{class:'btn',onclick:send},'Send')));
 }
-async function badge() {
-  if (!me) { unread = 0; return nav(); }
-  const { count } = await db.from("notifications").select("id", { count: "exact", head: true }).eq("read", false);
-  unread = count || 0; nav();
+async function accept(){
+  const{error}=await sb.from('conversations').update({status:'accepted'}).eq('id',cur.id);
+  if(error)return alert(error.message);await loadConvs();open(convs.find(c=>c.id===cur.id));
 }
-async function startSession(u) {
-  me = u; if (nchan) { db.removeChannel(nchan); nchan = null; }
-  if (u) {
-    try { await loadProf(); } catch (e) { console.error(e); }
-    nchan = db.channel("n" + u.id).on("postgres_changes", { event: "INSERT", schema: "public", table: "notifications", filter: "user_id=eq." + u.id },
-      () => { toast("You have a new notification"); badge(); }).subscribe();
-  } else prof = null;
-  await badge();
+async function appView(){
+  const{data:p}=await sb.from('profiles').select('*').eq('id',me.id).single();
+  if(p&&!p.username){
+    const note=$('p',{class:'msg'});
+    const f=$('form',{onsubmit:async ev=>{ev.preventDefault();
+      const u=f.u.value.trim().toLowerCase();
+      const{error}=await sb.from('profiles').update({username:u,display_name:f.d.value.trim()||u}).eq('id',me.id);
+      if(error){note.textContent=/duplicate|unique/.test(error.message)?'That username is taken.':'Use 3–24 letters, numbers or underscores.';note.className='msg err'}else appView()
+    }},$('p',{},'Pick a username so people can find you. You don’t need to share your real name.'),...field('u','Username'),...field('d','Display name (optional)'),$('p',{},$('button',{class:'btn'},'Continue')),note);
+    root.replaceChildren($('div',{class:'auth'},$('h1',{},'Welcome'),f));return}
+  await loadConvs();shell();
+  sb.channel('convs').on('postgres_changes',{event:'*',schema:'public',table:'conversations'},async()=>{await loadConvs();drawList()}).subscribe();
 }
-db.auth.onAuthStateChange((ev, s) => {
-  if (ev === "PASSWORD_RECOVERY") { me = s.user; nav(); go("reset"); return; }
-  const u = s ? s.user : null;
-  if (ev !== "SIGNED_OUT" && u && me && u.id === me.id) { me = u; return; } // token refresh or tab refocus: do nothing
-  setTimeout(async () => { await startSession(u); if (ev === "SIGNED_OUT") go(""); else render(); }, 0);
+function render(){me?appView():authView()}
+async function boot(){const{data}=await sb.auth.getSession();me=data.session?data.session.user:null;render()}
+sb.auth.onAuthStateChange((ev,s)=>{
+  if(ev==='PASSWORD_RECOVERY'){recoveryView();return}
+  const u=s?s.user:null;if((u&&u.id)!==(me&&me.id)){me=u;cur=null;profs={};render()}
 });
-
-/* ===== VIEWS ===== */
-const PRIV = ["discover", "me", "requests", "chats", "chat", "notifications", "blocked", "delete", "u"];
-const views = {
-  "": () => [
-    h("div", { class: "hero" }, h("h1", {}, "Your story. Your voice."),
-      h("p", { class: "mu" }, "A gentle place to meet people, say hello, and talk privately when you both want to."),
-      me ? h("a", { class: "btn p", href: "#/discover" }, "Meet members") : h("a", { class: "btn p", href: "#/signup" }, "Create your account")),
-    h("div", { class: "grid" },
-      h("div", { class: "card" }, h("h2", {}, "Ask first"), h("p", { class: "mu" }, "Nobody can message you until you accept their request.")),
-      h("div", { class: "card" }, h("h2", {}, "Private chats"), h("p", { class: "mu" }, "Only the two people in a conversation can read it.")),
-      h("div", { class: "card" }, h("h2", {}, "You stay in control"), h("p", { class: "mu" }, "Block, report, or delete your account whenever you choose.")))],
-
-  signup: () => { const st = h("p", { class: "err", role: "alert" });
-    const f = h("form", {}, ...F("sn", "Display name", { maxlength: 60, required: true, autocomplete: "name" }),
-      ...F("su", "Username (3-24 letters, numbers, underscore)", { maxlength: 24, required: true, autocomplete: "username" }),
-      ...F("se", "Email", { type: "email", required: true, autocomplete: "email" }),
-      ...F("sp", "Password (8+ characters, letters and numbers)", { type: "password", minlength: 8, required: true, autocomplete: "new-password" }),
-      h("p", { class: "s mu" }, "By joining you agree to the ", h("a", { href: "#/terms" }, "Terms"), " and ", h("a", { href: "#/privacy" }, "Privacy Policy"), "."),
-      st, h("button", { class: "btn p", type: "submit" }, "Create account"));
-    f.onsubmit = e => { e.preventDefault(); busy(e.submitter, async () => {
-      const u = clean($("#su").value), pw = $("#sp").value; st.textContent = "";
-      if (!okName(u)) { st.textContent = "Username must be 3-24 letters, numbers or underscores."; return; }
-      if (!/[A-Za-z]/.test(pw) || !/\d/.test(pw)) { st.textContent = "Password needs at least one letter and one number."; return; }
-      const { data, error } = await db.auth.signUp({ email: $("#se").value.trim(), password: pw,
-        options: { data: { username: u, display_name: $("#sn").value.trim() }, emailRedirectTo: location.origin + location.pathname } });
-      if (error) { st.textContent = error.message; return; }
-      go(data.session ? "discover" : "confirm"); }); };
-    return [h("h1", {}, "Create your account"), h("div", { class: "narrow" }, f, h("p", { class: "s" }, "Already a member? ", h("a", { href: "#/login" }, "Log in")))]; },
-
-  confirm: () => [h("h1", {}, "Check your email"), h("p", { class: "mu" }, "We sent a confirmation link. Open it, then log in. Check spam if you don't see it."), h("a", { class: "btn p", href: "#/login" }, "Go to log in")],
-
-  login: () => { const st = h("p", { class: "err", role: "alert" });
-    const f = h("form", {}, ...F("le", "Email", { type: "email", required: true, autocomplete: "email" }),
-      ...F("lp", "Password", { type: "password", required: true, autocomplete: "current-password" }), st,
-      h("button", { class: "btn p", type: "submit" }, "Log in"));
-    f.onsubmit = e => { e.preventDefault(); busy(e.submitter, async () => {
-      const { error } = await db.auth.signInWithPassword({ email: $("#le").value.trim(), password: $("#lp").value });
-      if (error) { st.textContent = error.message; return; } go("discover"); }); };
-    return [h("h1", {}, "Welcome back"), h("div", { class: "narrow" }, f, h("p", { class: "s" }, h("a", { href: "#/forgot" }, "Forgot password?"), " · ", h("a", { href: "#/signup" }, "Create account")))]; },
-
-  forgot: () => { const f = h("form", {}, ...F("fe", "Email", { type: "email", required: true }), h("button", { class: "btn p", type: "submit" }, "Send reset link"));
-    f.onsubmit = e => { e.preventDefault(); busy(e.submitter, async () => {
-      const { error } = await db.auth.resetPasswordForEmail($("#fe").value.trim(), { redirectTo: location.origin + location.pathname });
-      if (error) throw error; toast("If that email has an account, a reset link is on its way."); }); };
-    return [h("h1", {}, "Reset your password"), h("div", { class: "narrow" }, f)]; },
-
-  reset: () => { if (!me) return [h("h1", {}, "Reset link needed"), h("p", { class: "mu" }, "Open the reset link from your email first."), h("a", { class: "btn", href: "#/forgot" }, "Request a link")];
-    const f = h("form", {}, ...F("np", "New password", { type: "password", minlength: 8, required: true, autocomplete: "new-password" }),
-      ...F("nc", "Confirm password", { type: "password", minlength: 8, required: true, autocomplete: "new-password" }), h("button", { class: "btn p", type: "submit" }, "Update password"));
-    f.onsubmit = e => { e.preventDefault(); busy(e.submitter, async () => {
-      const p = $("#np").value; if (p !== $("#nc").value) throw new Error("Passwords do not match.");
-      if (!/[A-Za-z]/.test(p) || !/\d/.test(p)) throw new Error("Password needs a letter and a number.");
-      const { error } = await db.auth.updateUser({ password: p }); if (error) throw error;
-      toast("Password updated. Please log in."); await db.auth.signOut(); }); };
-    return [h("h1", {}, "Choose a new password"), h("div", { class: "narrow" }, f)]; },
-
-  discover: async () => {
-    let q = "", it = "", pg = 0; const list = h("div", { class: "grid" }), more = h("button", { class: "btn", hidden: true }, "Load more");
-    const load = async fresh => { if (fresh) { pg = 0; list.replaceChildren(); }
-      let s = db.from("profiles").select("id,username,display_name,bio,interests").neq("id", me.id).order("created_at", { ascending: false }).range(pg * 12, pg * 12 + 11);
-      if (q) { const t = q.replace(/[%,()*\\]/g, ""); s = s.or(`username.ilike.%${t}%,display_name.ilike.%${t}%`); }
-      if (it) s = s.contains("interests", [it]);
-      const { data, error } = await s; if (error) throw error;
-      data.forEach(m => list.append(h("a", { class: "card mem", href: "#/u/" + m.username }, av(m),
-        h("div", {}, h("b", {}, m.display_name), h("div", { class: "mu s" }, "@" + m.username), m.bio && h("p", { class: "s" }, m.bio.slice(0, 90)), chips(m.interests)))));
-      if (!list.children.length) list.append(empty("No members found. Try another search."));
-      more.hidden = data.length < 12; pg++; };
-    more.onclick = e => busy(e.target, () => load(false));
-    const f = h("form", { class: "row", role: "search" }, h("input", { id: "dq", type: "search", placeholder: "Search name or @username", "aria-label": "Search", style: "flex:2;min-width:160px" }),
-      h("input", { id: "di", placeholder: "Interest", "aria-label": "Interest", style: "flex:1;min-width:110px" }), h("button", { class: "btn p", type: "submit" }, "Search"));
-    f.onsubmit = e => { e.preventDefault(); q = $("#dq").value.trim(); it = $("#di").value.trim().toLowerCase(); busy(e.submitter, () => load(true)); };
-    await load(true); return [h("h1", {}, "Discover members"), f, list, more]; },
-
-  u: async name => {
-    const { data: m } = await db.from("profiles").select("id,username,display_name,bio,interests,created_at").ilike("username", name.replace(/_/g, "\\_")).maybeSingle();
-    if (!m) return [h("h1", {}, "Member not found"), h("p", { class: "mu" }, "This profile doesn't exist or isn't available."), h("a", { class: "btn", href: "#/discover" }, "Back to discover")];
-    const head = [h("div", { class: "row" }, av(m), h("div", {}, h("h1", { style: "margin:0" }, m.display_name), h("div", { class: "mu" }, "@" + m.username))),
-      h("p", {}, m.bio || h("span", { class: "mu" }, "No bio yet.")), h("div", {}, chips(m.interests)), h("p", { class: "s mu" }, "Joined " + new Date(m.created_at).toLocaleDateString())];
-    if (m.id === me.id) return [...head, h("a", { class: "btn p", href: "#/me" }, "Edit my profile")];
-    const { data: rq } = await db.from("chat_requests").select("*").or(`and(sender_id.eq.${me.id},recipient_id.eq.${m.id}),and(sender_id.eq.${m.id},recipient_id.eq.${me.id})`).order("created_at", { ascending: false }).limit(1);
-    const r = rq && rq[0]; let act;
-    if (r && r.status === "pending") act = h("p", { class: "mu" }, r.sender_id === me.id ? "Your request is waiting for a reply." : "They sent you a request. ", r.sender_id !== me.id && h("a", { href: "#/requests" }, "Review it"));
-    else if (r && r.status === "accepted") act = h("a", { class: "btn p", href: "#/chats" }, "Open your chats");
-    else act = h("button", { class: "btn p", onclick: () => { const t = h("textarea", { id: "it", maxlength: "300", placeholder: "Introduce yourself in a sentence or two" });
-      ask("Say hello to " + m.display_name, [t], async () => { await rpc("send_chat_request", { p_recipient: m.id, p_intro: t.value }); toast("Request sent."); render(); }, "Send request"); } }, "Say hello");
-    return [...head, h("div", { class: "row" }, act, h("button", { class: "btn", onclick: () => reportDlg(m.id) }, "Report"),
-      h("button", { class: "btn d", onclick: () => blockDlg(m.id, m.display_name, () => go("discover")) }, "Block"))]; },
-
-  me: () => { const f = h("form", {}, ...F("pu", "Username", { value: prof.username, maxlength: 24, required: true }), ...F("pn", "Display name", { value: prof.display_name, maxlength: 60, required: true }),
-      ...F("pb", "Short bio (300 characters)", { rows: 3, maxlength: 300 }), ...F("pi", "Interests (comma separated, up to 8)", { value: (prof.interests || []).join(", ") }),
-      h("p", { class: "s mu" }, "Your username, name, bio and interests are visible to other members. Your email is never shown."), h("button", { class: "btn p", type: "submit" }, "Save profile"));
-    f.querySelector("#pb").value = prof.bio || "";
-    f.onsubmit = e => { e.preventDefault(); busy(e.submitter, async () => {
-      const u = clean($("#pu").value); if (!okName(u)) throw new Error("Username must be 3-24 letters, numbers or underscores.");
-      const row = { username: u, display_name: $("#pn").value.trim(), bio: $("#pb").value.trim() || null, updated_at: new Date().toISOString(),
-        interests: [...new Set($("#pi").value.split(",").map(x => x.trim().toLowerCase()).filter(Boolean))].slice(0, 8) };
-      const { error } = await db.from("profiles").update(row).eq("id", me.id);
-      if (error) throw new Error(error.code === "23505" ? "That username is taken." : error.message);
-      Object.assign(prof, row); toast("Profile saved."); }); };
-    return [h("h1", {}, "My profile"), h("div", { class: "narrow" }, h("p", { class: "mu s" }, "Signed in as " + me.email), f,
-      h("div", { class: "row" }, h("a", { class: "btn", href: "#/blocked" }, "Blocked members"), h("button", { class: "btn", onclick: async () => { await db.auth.signOut(); } }, "Log out"),
-        h("a", { class: "btn d", href: "#/delete" }, "Delete account")))]; },
-
-  requests: async () => {
-    const { data } = await db.from("chat_requests").select("*").eq("status", "pending").order("created_at", { ascending: false });
-    const n = await names((data || []).flatMap(r => [r.sender_id, r.recipient_id]));
-    const inc = (data || []).filter(r => r.recipient_id === me.id), out = (data || []).filter(r => r.sender_id === me.id);
-    const act = (r, fn, label, cls = "btn") => h("button", { class: cls, onclick: e => busy(e.target, async () => { const c = await fn(); if (c && label === "Accept") { toast("Accepted."); go("chat/" + c); } else render(); }) }, label);
-    return [h("h1", {}, "Chat requests"), h("h2", {}, "Received"),
-      inc.length ? inc.map(r => h("div", { class: "card item" }, h("div", {}, h("a", { href: "#/u/" + (n[r.sender_id] || {}).username }, h("b", {}, nm(n, r.sender_id))), h("p", { class: "mu", style: "margin:4px 0 0" }, r.intro)),
-        h("div", { class: "row" }, act(r, () => rpc("respond_chat_request", { p_id: r.id, p_accept: true }), "Accept", "btn p"), act(r, () => rpc("respond_chat_request", { p_id: r.id, p_accept: false }), "Decline")))) : empty("No requests waiting."),
-      h("h2", { style: "margin-top:24px" }, "Sent"),
-      out.length ? out.map(r => h("div", { class: "card item" }, h("div", {}, h("b", {}, nm(n, r.recipient_id)), h("p", { class: "mu", style: "margin:4px 0 0" }, r.intro)),
-        act(r, () => rpc("cancel_chat_request", { p_id: r.id }), "Cancel"))) : empty("No pending requests sent.")]; },
-
-  chats: async () => {
-    const { data: mine } = await db.from("conversation_members").select("conversation_id,last_read_at").eq("user_id", me.id);
-    if (!mine.length) return [h("h1", {}, "Chats"), empty("No conversations yet. Say hello to someone from Discover.")];
-    const ids = mine.map(x => x.conversation_id);
-    const [{ data: oth }, { data: ms }] = await Promise.all([db.from("conversation_members").select("conversation_id,user_id").in("conversation_id", ids).neq("user_id", me.id),
-      db.from("messages").select("conversation_id,sender_id,created_at").in("conversation_id", ids).order("created_at", { ascending: false }).limit(300)]);
-    const n = await names(oth.map(o => o.user_id));
-    const rows = mine.map(c => { const last = ms.find(m => m.conversation_id === c.conversation_id); const o = oth.find(x => x.conversation_id === c.conversation_id);
-      return { id: c.conversation_id, o, last, un: ms.some(m => m.conversation_id === c.conversation_id && m.sender_id !== me.id && new Date(m.created_at) > new Date(c.last_read_at)) }; })
-      .sort((a, b) => new Date(b.last ? b.last.created_at : 0) - new Date(a.last ? a.last.created_at : 0));
-    return [h("h1", {}, "Chats"), rows.map(r => h("a", { class: "card mem", style: "margin:10px 0", href: "#/chat/" + r.id }, av(n[r.o && r.o.user_id]),
-      h("div", {}, r.un && h("span", { class: "dot", title: "Unread" }), h("b", {}, nm(n, r.o && r.o.user_id)), h("div", { class: "mu s" }, r.last ? "Last message " + when(r.last.created_at) : "No messages yet"))))]; },
-
-  chat: async id => {
-    const { data: mem } = await db.from("conversation_members").select("user_id").eq("conversation_id", id);
-    if (!mem || !mem.some(x => x.user_id === me.id)) return [h("h1", {}, "Conversation not found"), h("a", { class: "btn", href: "#/chats" }, "Back to chats")];
-    const oid = (mem.find(x => x.user_id !== me.id) || {}).user_id; const o = (await names([oid]))[oid] || { display_name: "Member" };
-    const box = h("div", { class: "msgs", role: "log", "aria-live": "polite" }), seen = new Set(); let oldest = null;
-    const more = h("button", { class: "btn", hidden: true }, "Load older messages");
-    const bub = m => { const mine = m.sender_id === me.id; return h("div", { class: "m" + (mine ? " me" : ""), "data-id": m.id }, m.body,
-      h("small", {}, when(m.created_at), !mine && h("button", { onclick: () => reportDlg(m.sender_id, m.id) }, "Report"))); };
-    const add = (m, top) => { if (seen.has(m.id)) return; seen.add(m.id); if (!oldest || new Date(m.created_at) < new Date(oldest)) oldest = m.created_at;
-      top ? box.prepend(bub(m)) : (box.append(bub(m)), scrollTo(0, document.body.scrollHeight)); };
-    const page = async before => { let s = db.from("messages").select("*").eq("conversation_id", id).order("created_at", { ascending: false }).limit(30);
-      if (before) s = s.lt("created_at", before); const { data, error } = await s; if (error) throw error;
-      data.forEach(m => add(m, true)); more.hidden = data.length < 30; };
-    more.onclick = e => busy(e.target, () => page(oldest));
-    await page(); if (!seen.size) box.append(h("p", { class: "mu", id: "em" }, "No messages yet. Say hi."));
-    rpc("mark_conversation_read", { p_conv: id }).then(badge).catch(() => {});
-    chan = db.channel("c" + id).on("postgres_changes", { event: "INSERT", schema: "public", table: "messages", filter: "conversation_id=eq." + id },
-      p => { const e = $("#em"); if (e) e.remove(); add(p.new); if (p.new.sender_id !== me.id) rpc("mark_conversation_read", { p_conv: id }).catch(() => {}); }).subscribe();
-    const t = h("textarea", { id: "mt", maxlength: "2000", placeholder: "Write a message", "aria-label": "Message", style: "min-height:60px" });
-    const f = h("form", {}, t, h("div", { class: "row" }, h("button", { class: "btn p", type: "submit" }, "Send")));
-    f.onsubmit = e => { e.preventDefault(); const b = t.value.trim(); if (!b) return; busy(e.submitter, async () => {
-      const m = await rpc("send_message", { p_conv: id, p_body: b }); const em = $("#em"); if (em) em.remove(); t.value = ""; add(m); }); };
-    return [h("div", { class: "row" }, h("a", { href: "#/chats" }, "‹ Chats"), av(o), h("b", {}, o.display_name),
-      h("span", { style: "margin-left:auto" }, h("button", { class: "btn", onclick: () => reportDlg(oid) }, "Report"), " ",
-        h("button", { class: "btn d", onclick: () => blockDlg(oid, o.display_name, () => go("chats")) }, "Block"))), more, box, f,
-      h("p", { class: "s mu" }, "Messages are private to the two of you but are not end-to-end encrypted.")]; },
-
-  notifications: async () => {
-    const { data } = await db.from("notifications").select("*").order("created_at", { ascending: false }).limit(50);
-    const n = await names((data || []).map(x => x.data && x.data.from));
-    await db.from("notifications").update({ read: true }).eq("user_id", me.id).eq("read", false); badge();
-    const txt = { request: "sent you a chat request", accepted: "accepted your chat request", message: "sent you a message" };
-    const link = x => x.type === "request" ? "#/requests" : x.data.conversation_id ? "#/chat/" + x.data.conversation_id : "#/chats";
-    return [h("h1", {}, "Notifications"), (data || []).length ? data.map(x => h("a", { class: "card item", style: "text-decoration:none;color:inherit", href: link(x) },
-      h("span", {}, !x.read && h("span", { class: "dot" }), h("b", {}, nm(n, x.data.from)), " " + (txt[x.type] || "did something")), h("span", { class: "mu s" }, when(x.created_at)))) : empty("You're all caught up.")]; },
-
-  blocked: async () => {
-    const { data } = await db.from("blocks").select("blocked_id,created_at"); const n = await names((data || []).map(b => b.blocked_id));
-    return [h("h1", {}, "Blocked members"), (data || []).length ? data.map(b => h("div", { class: "card item" }, h("b", {}, nm(n, b.blocked_id)),
-      h("button", { class: "btn", onclick: e => busy(e.target, async () => { await rpc("unblock_user", { p_id: b.blocked_id }); render(); }) }, "Unblock"))) : empty("You haven't blocked anyone."),
-      h("p", { class: "s mu" }, "Blocked members you've hidden may not appear here. Unblocking lets you both see each other again.")]; },
-
-  delete: () => { const f = h("form", {}, h("p", { class: "mu" }, "This permanently deletes your profile, requests, notifications and the messages you sent. Reports you made stay for safety. This cannot be undone."),
-      ...F("dp", "Your password", { type: "password", required: true, autocomplete: "current-password" }), ...F("dc", "Type DELETE to confirm", { required: true, autocomplete: "off" }),
-      h("div", { class: "row" }, h("button", { class: "btn d", type: "submit" }, "Delete my account")));
-    f.onsubmit = e => { e.preventDefault(); busy(e.submitter, async () => {
-      if ($("#dc").value !== "DELETE") throw new Error("Type DELETE exactly to confirm.");
-      const { error } = await db.auth.signInWithPassword({ email: me.email, password: $("#dp").value }); if (error) throw new Error("Wrong password.");
-      await rpc("delete_my_account"); await db.auth.signOut({ scope: "local" }).catch(() => {}); me = null; prof = null; nav(); toast("Your account was deleted."); go(""); }); };
-    return [h("h1", {}, "Delete account"), h("div", { class: "narrow" }, f)]; },
-
-  privacy: () => doc("Privacy Policy", [
-    "Template for you to review with a lawyer before launch.",
-    "What we store: your email (private), username, display name, optional bio and interests, chat requests, messages, notifications, blocks and reports.",
-    "What others see: your username, display name, bio, interests and join date. Your email is never shown to other members.",
-    "Messages are visible to the two people in the conversation. They are not end-to-end encrypted, so people with administrator access to the database could technically read them.",
-    "Deleting your account removes your profile, requests, notifications and the messages you sent. Reports you filed are kept for safety.",
-    "To ask about your data, write to " + CONTACT_EMAIL + "."]),
-  terms: () => doc("Terms of Service", [
-    "Template for you to review with a lawyer before launch.",
-    "Use Unheard Soul respectfully and follow the Community Guidelines. You are responsible for what you write.",
-    "We may remove content or accounts that harm others. The service is provided as is, without guarantees.",
-    "You must be 18 or older to use this service."]),
-  guidelines: () => doc("Community Guidelines", [
-    "Be kind. Listen more than you advise.",
-    "No harassment, hate, threats, spam, or pretending to be someone else.",
-    "Never share passwords, bank details, or private information about others.",
-    "Use Block and Report when something feels wrong.",
-    "If you or someone you know is in crisis in India, call Tele-MANAS at 14416 (free, 24x7) or local emergency services."]),
-  help: () => doc("Help and contact", [
-    "Forgot your password? Use Forgot password on the log in page.",
-    "Someone bothering you? Open their profile and choose Block or Report.",
-    "Need to reach us? Email " + CONTACT_EMAIL + ".",
-    "In crisis in India? Call Tele-MANAS at 14416 (free, 24x7)."])
-};
-function doc(t, ps) { return [h("h1", {}, t), h("div", { class: "narrow", style: "max-width:640px" }, ps.map(p => h("p", {}, p)))]; }
-
-/* ===== ROUTER ===== */
-function nav() {
-  const cur = location.hash.slice(2).split("/")[0];
-  const L = me ? [["discover", "Discover"], ["chats", "Chats"], ["requests", "Requests"], ["notifications", "Alerts" + (unread ? " (" + unread + ")" : "")], ["me", "Me"]] : [["login", "Log in"], ["signup", "Join"]];
-  $("#nav").replaceChildren(...L.map(([p, t]) => h("a", { href: "#/" + p, class: p === cur ? "on" : "", "aria-current": p === cur ? "page" : null }, t)),
-    h("button", { class: "ic", "aria-label": "Switch light or dark theme", onclick: () => { const d = document.documentElement; d.dataset.theme = d.dataset.theme === "dark" ? "light" : "dark";
-      try { localStorage.setItem("us_theme", d.dataset.theme); } catch (e) {} } }, "◐"));
-}
-async function render() {
-  const [r = "", arg = ""] = decodeURIComponent(location.hash.slice(2)).split("/");
-  if (chan) { db.removeChannel(chan); chan = null; }
-  nav();
-  if (PRIV.includes(r) && !me) return go("login");
-  const app = $("#app"); const fn = views[r];
-  if (!fn) { app.replaceChildren(h("h1", {}, "Page not found"), h("p", { class: "mu" }, "That page doesn't exist."), h("a", { class: "btn p", href: "#/" }, "Go home")); return; }
-  app.replaceChildren(h("p", { class: "mu", role: "status" }, "Loading…"));
-  try { app.replaceChildren(...(await fn(arg)).flat()); } catch (e) { app.replaceChildren(h("h1", {}, "Something went wrong"), h("p", { class: "err" }, e.message || "Please try again."), h("button", { class: "btn", onclick: render }, "Retry")); }
-  scrollTo(0, 0);
-}
-addEventListener("hashchange", render);
-(async () => {
-  $("#yr").textContent = new Date().getFullYear();
-  let t; try { t = localStorage.getItem("us_theme"); } catch (e) {}
-  document.documentElement.dataset.theme = t || (matchMedia("(prefers-color-scheme: light)").matches ? "light" : "dark");
-  const { data } = await db.auth.getSession();
-  await startSession(data.session ? data.session.user : null); render();
-})();
-</script>
-</body>
-</html>
+boot();
+</script></body></html>

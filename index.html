@@ -81,7 +81,7 @@ footer{text-align:center;color:var(--muted);font-size:12px;padding:25px;border-t
    <button class="auth-nav hidden" data-page="requests">Requests</button>
    <button class="auth-nav hidden" data-page="messages">Messages</button>
    <button class="auth-nav hidden" data-page="profile">My profile</button>
-   <button id="loginNav" data-page="auth">Log in</button>
+   <button id="loginNav" data-page="auth" onclick="document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));document.getElementById('page-auth').classList.add('active')">Log in</button>
   </nav></div>
  </div>
 </header>
